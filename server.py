@@ -600,6 +600,8 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             "/pwa.js": "application/javascript",
             "/support-widget.js": "application/javascript",
             "/gallery.js": "application/javascript",
+            "/app-shell.js": "application/javascript",
+            "/app-responsive.css": "text/css; charset=utf-8",
             "/offline.html": "text/html; charset=utf-8",
             "/icons/ariel-192.png": "image/png",
             "/icons/ariel-512.png": "image/png",

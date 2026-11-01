@@ -105,6 +105,9 @@ class PrivateDeployment(unittest.TestCase):
         status, _, raw = self.request('GET','/api/support/reports',headers=hdr)
         self.assertEqual(status,200);self.assertNotIn(b'fixture-secret',raw)
         self.assertEqual(self.request('GET','/support-widget.js',headers=hdr)[0],200)
+        self.assertEqual(self.request('GET','/app-shell.js',headers=hdr)[0],200)
+        status, css_headers, _ = self.request('GET','/app-responsive.css',headers=hdr)
+        self.assertEqual(status,200);self.assertIn('text/css',css_headers['Content-Type'])
         with patch.object(server,'answer_help',side_effect=RuntimeError('fixture failure')):
             status, _, raw = self.request('POST','/api/support/chat',{'message':'Ayuda','section':'tools'},hdr)
         self.assertEqual(status,500)

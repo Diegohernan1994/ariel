@@ -1,0 +1,33 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const root=require('node:path').join(__dirname,'../public');
+const source=fs.readFileSync(root+'/app-shell.js','utf8');
+const elements=new Map(),classes=new Set(),windowEvents={},documentEvents={},viewportEvents={},properties={};let modeListener;
+function el(id){if(!elements.has(id))elements.set(id,{id,events:{},hidden:false,attrs:{},inert:false,setAttribute(k,v){this.attrs[k]=v},removeAttribute(k){delete this.attrs[k]},getAttribute(k){return this.attrs[k]},addEventListener(k,fn){this.events[k]=fn},focus(){doc.activeElement=this},getClientRects(){return [{}]}});return elements.get(id)}
+const doc={body:{classList:{toggle:(n,v)=>v?classes.add(n):classes.delete(n)}},documentElement:{style:{setProperty:(n,v)=>properties[n]=v}},getElementById:el,addEventListener:(n,f)=>documentEvents[n]=f};
+const nav=el('app-navigation'),menu=el('mobile-menu'),content=el('panel-content'),close=el('navigation-close'),install=el('install');
+let current=el('chat-tab');current.attrs['aria-controls']='panel-chat';current.querySelector=()=>({textContent:'Chat'});
+nav.querySelector=()=>current;nav.querySelectorAll=()=>[close,current,install];nav.contains=x=>[close,current,install].includes(x);
+const compact={matches:false,addEventListener:(_,f)=>modeListener=f},viewport={height:900,scale:1,addEventListener:(n,f)=>viewportEvents[n]=f};
+const ctx={document:doc,window:{matchMedia:()=>compact,addEventListener:(n,f)=>windowEvents[n]=f,visualViewport:viewport,innerHeight:900}};
+vm.createContext(ctx);vm.runInContext(source,ctx);
+assert.equal(nav.inert,false);assert.equal(properties['--app-height'],'900px');
+compact.matches=true;modeListener();assert.equal(nav.inert,true);assert.equal(nav.attrs['aria-hidden'],'true');
+menu.events.click();assert(classes.has('navigation-open'));assert.equal(nav.inert,false);assert.equal(content.inert,true);assert.equal(doc.activeElement,current);
+doc.activeElement=install;let prevented=false;documentEvents.keydown({key:'Tab',shiftKey:false,preventDefault(){prevented=true}});assert(prevented);assert.equal(doc.activeElement,close);
+current=el('gallery-tab');current.attrs['aria-controls']='panel-gallery';current.querySelector=()=>({textContent:'Galería'});
+windowEvents['ariel:section']();assert.equal(nav.inert,true);assert.equal(content.inert,false);assert.equal(el('mobile-section-name').textContent,'Galería');assert.equal(doc.activeElement,el('panel-gallery'));
+menu.events.click();documentEvents.keydown({key:'Escape',preventDefault(){}});assert.equal(doc.activeElement,menu);assert.equal(el('navigation-backdrop').hidden,true);
+viewport.height=340;viewportEvents.resize();assert.equal(properties['--app-height'],'340px');assert(classes.has('compact-height'));
+viewport.scale=2;viewport.height=170;viewportEvents.resize();assert.equal(properties['--app-height'],'340px');
+compact.matches=false;modeListener();assert.equal(nav.inert,false);assert.equal(nav.attrs['aria-hidden'],undefined);
+console.log('OK: menú móvil, foco, Escape, navegación, cambio de tamaño y teclado; zoom de accesibilidad preservado.');
+// Parsear el CSS con el analizador que ya usa la tienda, sin instalar dependencias.
+const postcss=require('postcss');
+const css=postcss.parse(fs.readFileSync(root+'/app-responsive.css','utf8'));
+const medias=[];css.walkAtRules('media',rule=>medias.push(rule.params));
+assert(medias.includes('(max-width:900px)'));assert(medias.includes('(max-width:600px)'));
+const html=fs.readFileSync(root+'/index.html','utf8');
+for(const id of ['mobile-menu','navigation-close','app-navigation','navigation-backdrop','desktop-brand','app-header-actions','chat-caption','mic-label'])assert.equal([...html.matchAll(new RegExp('id="'+id+'"','g'))].length,1,id);
+assert(html.includes('viewport-fit=cover'));
+assert(!html.includes('grid-template-columns: 120px minmax(0,1fr)'));
+console.log('OK: CSS válido, estructura móvil completa y sin la barra fija que comprimía el contenido.');

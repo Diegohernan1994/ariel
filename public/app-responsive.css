@@ -1,0 +1,138 @@
+/* Estructura de aplicación: el contenido se adapta a su espacio real. */
+html,body{margin:0;width:100%;min-width:0;overscroll-behavior:none}
+body{height:var(--app-height,100dvh)!important;max-height:var(--app-height,100dvh);overflow:hidden!important;grid-template-columns:232px minmax(0,1fr)!important;grid-template-rows:64px minmax(0,1fr)!important}
+*,*::before,*::after{box-sizing:border-box}
+#desktop-brand{display:none!important}
+#mobile-menu,#navigation-close,#navigation-backdrop{display:none}
+#app-header-actions{flex-wrap:nowrap;gap:8px;min-width:0}
+#app-header-actions>button,#app-header-actions>a{min-height:40px;white-space:nowrap;flex-shrink:0}
+#app-navigation{min-height:0;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.sidebar-brand{justify-content:space-between}
+#panel-content{min-height:0;min-width:0;overflow:hidden}
+#panel-content>[role=tabpanel]{min-width:0;min-height:0;max-width:100%;width:100%;overscroll-behavior:contain}
+#panel-tools,#panel-gallery,#panel-analytics,#panel-status{padding:24px 24px 100px;overflow-y:auto;overflow-x:hidden;scrollbar-gutter:stable}
+#panel-content p,#panel-content h2,#panel-content h3{overflow-wrap:anywhere}
+#panel-content input,#panel-content textarea,#panel-content select{max-width:100%;min-width:0}
+#panel-tools>div,#panel-gallery>div,#panel-analytics>div,#panel-status>div{min-width:0;max-width:100%}
+#panel-tools>div>div:first-child{flex-wrap:wrap;gap:12px}
+#panel-tools h2{flex:1 1 200px;line-height:1.5}
+#panel-tools>div>div:first-child>button{flex-shrink:0}
+#uploads-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-height:300px;min-width:0}
+#uploads-grid img,#uploads-grid video{width:100%;height:auto!important;aspect-ratio:4/3;object-fit:cover}
+#reel-transition{width:100%;min-width:0;white-space:normal}
+#gallery-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr))}
+#gallery-grid article{min-width:0}
+#gallery-grid video,#gallery-grid img{width:100%;max-width:100%}
+#gallery-grid article>div{gap:8px}
+#gallery-summary,#gallery-message{line-height:1.7}
+[data-reel-item]{flex-wrap:wrap;gap:12px;min-width:0}
+[data-reel-item]>div:first-child{flex:1 1 220px;min-width:0}
+[data-reel-item]>div:last-child{flex-wrap:wrap;gap:8px;flex-shrink:0}
+#chat-box{min-width:0;min-height:0;overflow-x:hidden;overflow-y:auto}
+#chat-box audio,#chat-box video{max-width:100%;width:100%}
+#chat-box pre{max-width:100%;overflow:auto;white-space:pre-wrap}
+#chat-box a{overflow-wrap:anywhere}
+#chat-form{min-width:0}
+#chat-input{min-width:0;width:0}
+#panel-chat>div:last-child{padding-bottom:max(16px,env(safe-area-inset-bottom))}
+#chat-caption{flex-wrap:wrap;row-gap:2px;line-height:1.5}
+#selected-files-bar{flex-wrap:wrap;gap:8px;max-height:112px;overflow:auto;flex-shrink:0}
+#selected-files-bar>div:first-child{min-width:0;flex:1 1 220px}
+#selected-files-bar>div:last-child{flex-wrap:wrap;gap:8px}
+#analytics-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));align-items:end;gap:12px}
+#analytics-filters>label{min-width:0;display:flex;flex-direction:column}
+#analytics-filters input,#analytics-filters select{width:100%;max-width:100%;min-width:0}
+#analytics-filters button{min-width:0;white-space:normal;min-height:42px}
+#analytics-chart>div:first-child{align-items:flex-start}
+#analytics-chart label{display:flex;flex-wrap:wrap;gap:6px;align-items:center;max-width:100%}
+#an-chart-metric{margin-left:0;max-width:100%}
+#an-chart-canvas{min-width:0;max-width:100%;overflow:auto;overscroll-behavior-x:contain}
+#panel-content .overflow-x-auto{max-width:100%;min-width:0;overscroll-behavior-x:contain}
+#panel-analytics table,#panel-status table{min-width:560px}
+#config-modal{z-index:1100;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+#config-modal>div{width:min(100%,520px);min-width:0;max-height:calc(var(--app-height,100dvh) - 32px);overflow:auto;overscroll-behavior:contain}
+#config-modal input{min-width:0;max-width:100%}
+#config-modal>div>div:last-child{flex-wrap:wrap;gap:8px}
+@media(min-width:901px) and (max-width:1150px){
+ body{grid-template-columns:200px minmax(0,1fr)!important}
+ #app-navigation{padding-left:8px;padding-right:8px}
+ #app-header-actions>button,#app-header-actions>a{padding-left:10px;padding-right:10px;font-size:11px}
+ #panel-tools,#panel-gallery,#panel-analytics,#panel-status{padding:18px 18px 100px}
+ #uploads-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
+ body{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:calc(56px + env(safe-area-inset-top)) minmax(0,1fr)!important}
+ body>header{grid-column:1!important;grid-row:1!important;gap:8px;justify-content:space-between!important;padding:env(safe-area-inset-top) max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left));min-width:0}
+ #mobile-menu{display:flex;align-items:center;gap:10px;border:0;background:white;min-height:44px;min-width:44px;max-width:calc(100% - 144px);padding:8px;font-size:14px!important;text-align:left}
+ #mobile-menu i{display:inline-block!important;font-size:18px;flex-shrink:0}
+ #mobile-section-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+ #app-header-actions{flex-wrap:nowrap!important;gap:4px;flex-shrink:0}
+ #app-header-actions>button,#app-header-actions>a{display:flex!important;align-items:center;justify-content:center;min-width:44px;min-height:44px;width:44px;height:44px;padding:0!important}
+ #app-header-actions>button i,#app-header-actions>a i{display:inline-block!important;font-size:16px!important}
+ #app-header-actions>button span,#app-header-actions>a span{display:none!important}
+ #app-navigation{position:fixed;z-index:1000;inset:0 auto 0 0;grid-column:auto!important;grid-row:auto!important;width:min(284px,calc(100vw - 40px));height:var(--app-height,100dvh);padding:env(safe-area-inset-top) 12px max(20px,env(safe-area-inset-bottom));transform:translateX(-105%);visibility:hidden;transition:transform .18s ease,visibility .18s;overflow-y:auto}
+ body.navigation-open #app-navigation{transform:translateX(0);visibility:visible}
+ #app-navigation .sidebar-brand{height:64px;flex-shrink:0;margin-bottom:12px;font-size:17px;padding:0 8px}
+ #app-navigation [role=tab]{min-height:48px;font-size:14px;padding:12px;gap:12px}
+ #app-navigation [role=tab] i{width:18px;font-size:15px}
+ #navigation-close{display:flex;align-items:center;justify-content:center;width:44px;height:44px;background:transparent;border:0;font-size:20px}
+ #navigation-backdrop:not([hidden]){display:block;position:fixed;inset:0;z-index:950;border:0;background:#0006;width:100%;height:100%;padding:0}
+ #panel-content{grid-column:1!important;grid-row:2!important}
+ #panel-tools,#panel-gallery,#panel-analytics,#panel-status{padding:16px max(12px,env(safe-area-inset-right)) 100px max(12px,env(safe-area-inset-left))}
+ #panel-content button,#panel-content select{min-height:44px}
+ #panel-content input,#panel-content textarea,#panel-content select{font-size:16px}
+ #panel-content button{touch-action:manipulation}
+ #panel-chat>div:first-child{padding:10px 12px;gap:8px}
+ #panel-chat>div:first-child>div{min-width:0}
+ #panel-chat>div:first-child p{font-size:10px}
+ #chat-box{padding:20px 12px}
+ #chat-box .user-msg-container>div{max-width:92%}
+ #chat-box .assistant-msg-container>div{max-width:100%}
+ #chat-caption{font-size:9px}
+ #support-widget{right:max(12px,env(safe-area-inset-right))!important;bottom:max(12px,env(safe-area-inset-bottom))!important}
+ #support-widget #support-toggle{width:52px;height:52px;min-height:52px;padding:8px;justify-content:center}
+ #support-widget #support-toggle>span{display:none}
+ #support-widget #support-toggle svg{width:34px;height:34px}
+ #support-widget #support-box{position:fixed;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(76px + env(safe-area-inset-bottom));width:auto;max-height:calc(var(--app-height,100dvh) - 150px);padding:12px}
+ #support-widget #support-feed{max-height:30dvh}
+ #support-widget #support-input{font-size:16px}
+ #support-widget #support-status{max-width:calc(100vw - 24px);font-size:11px}
+ #support-toast{top:calc(64px + env(safe-area-inset-top))!important;right:12px!important;max-width:calc(100vw - 24px)!important}
+}
+@media(max-width:600px){
+ #panel-tools>div,#panel-analytics>div,#panel-analytics>section,#panel-status>div{padding:12px}
+ #panel-tools h2{font-size:14px;flex-basis:100%}
+ #uploads-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-height:310px;padding:0}
+ #uploads-grid button{width:36px!important;height:36px!important;min-height:36px!important}
+ #reel-transition{font-size:14px;min-height:44px}
+ #btn-build-reel{width:100%}
+ [data-reel-item]>div:last-child{width:100%;justify-content:flex-end}
+ #chat-form{display:grid;grid-template-columns:44px 44px minmax(0,1fr) 44px;gap:4px;padding:6px}
+ #chat-input{grid-column:1/-1;grid-row:1;width:100%;font-size:16px;min-height:44px;padding:8px}
+ #chat-form>button:first-child{grid-column:1;grid-row:2}
+ #btn-mic{grid-column:2;grid-row:2}
+ #btn-voice-toggle{grid-column:3;grid-row:2;justify-self:start;min-width:44px;justify-content:center}
+ #btn-send{grid-column:4;grid-row:2}
+ #chat-form>button{width:44px;height:44px;min-height:44px;padding:0}
+ #voice-toggle-text{display:none!important}
+ #chat-caption>span:last-child,#chat-caption>span:nth-child(2){display:none}
+ #selected-files-bar{padding:8px 12px}
+ #selected-files-bar>div:last-child{width:100%}
+ #gallery-grid{grid-template-columns:minmax(0,1fr)}
+ #analytics-filters{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px}
+ #analytics-filters>label:nth-child(n+3),#analytics-filters>button{grid-column:1/-1}
+ #analytics-filters>label{font-size:12px}
+ #panel-analytics table,#panel-status table{font-size:12px}
+ #config-modal>div{padding:18px}
+}
+@media(prefers-reduced-motion:reduce){#app-navigation{transition:none}}
+@media(max-width:900px){
+ body.compact-height #chat-caption,body.compact-height #selected-files-bar,body.compact-height #panel-chat>div:first-child p{display:none!important}
+ body.compact-height #panel-chat>div:first-child{padding:6px 12px}
+ body.compact-height #panel-chat>div:last-child{padding:6px 8px max(6px,env(safe-area-inset-bottom))}
+}
+@media(max-width:900px){
+ #config-modal input,#config-modal select{font-size:16px;min-height:44px}
+ #config-modal button{min-height:44px}
+ #mobile-section-name{min-width:0}
+}

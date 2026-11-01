@@ -9,7 +9,7 @@ from contextlib import closing
 from datetime import datetime, timezone, timedelta
 
 SECTIONS = {'tools':'Herramientas', 'gallery':'Galería', 'analytics':'Analíticas', 'status':'Estado de tienda', 'chat':'Chat'}
-GUIDE = '''Ariel es un panel comercial. Secciones:
+GUIDE = '''Ariel es un panel comercial. En celular o tablet, las secciones se abren desde el botón de menú de arriba a la izquierda. En escritorio están en la barra lateral. Secciones:
 Herramientas: subir varias fotos o videos con Ctrl/Mayús en PC; máximo 20 MB por archivo.
 Los archivos quedan seleccionados en el orden de subida. Tocar una miniatura desmarca o agrega al final.
 Cada foto genera 5 segundos de zoom y conserva los 3 centrales. Videos conservan duración.

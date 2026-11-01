@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <meta name="theme-color" content="#171717" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -51,31 +51,14 @@
     body > header > div:last-child { flex-wrap: wrap; justify-content: flex-end; }
     #panel-status p, .msg-body-content { overflow-wrap: anywhere; }
     button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #454545; outline-offset: 3px; }
-    @media (max-width: 700px) {
-      body { grid-template-columns: 154px minmax(0,1fr); grid-template-rows: 58px minmax(0,1fr); }
-      body > nav { padding: 0 6px 16px; }
-      .sidebar-brand { height: 58px; padding: 0 10px; margin-bottom: 12px; }
-      body > nav [role="tab"] { font-size: 11px; padding: 10px 8px; gap: 7px; }
-      body > header { padding: 8px; }
-      body > header button { padding: 8px !important; font-size: 10px !important; }
-      body > header button i { display: none; }
-      #panel-tools, #panel-analytics, #panel-status { padding: 12px; }
-      #chat-box { padding-left: 12px; padding-right: 12px; }
-    }
-    @media (max-width: 440px) {
-      body { grid-template-columns: 120px minmax(0,1fr); }
-      body > nav [role="tab"] { gap: 5px; font-size: 10px; }
-      body > nav [role="tab"] i { width: 12px; font-size: 11px; }
-      body > header button { font-size: 9px !important; padding: 6px !important; }
-      body > header > div { gap: 4px; }
-    }
   </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden bg-[#fafafa] text-[#2C302E]">
 
   <!-- BARRA SUPERIOR CÁLIDA Y PASTEL DIRIGIDA A MARCOS -->
   <header class="bg-[#FFFFFF] border-b border-[#e5e5e5] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm">
-    <div class="flex items-center gap-3">
+    <button id="mobile-menu" type="button" aria-label="Abrir menú de secciones" aria-controls="app-navigation" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i><span id="mobile-section-name">Chat</span></button>
+    <div id="desktop-brand" class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-[#f4f4f4] border border-[#e0e0e0] flex items-center justify-center text-black text-lg font-bold">
         <i class="fa-solid fa-store text-black"></i>
       </div>
@@ -84,27 +67,28 @@
       </div>
     </div>
 
-    <div class="flex items-center gap-2">
+    <div id="app-header-actions" class="flex items-center gap-2">
       <!-- Botón rápido para que Marcos suba clips o fotos -->
-      <button onclick="document.getElementById('file-upload').click()" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-black hover:bg-neutral-800 text-white flex items-center gap-1.5 transition shadow-sm">
+      <button aria-label="Subir fotos o clips" title="Subir fotos o clips" onclick="document.getElementById('file-upload').click()" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-black hover:bg-neutral-800 text-white flex items-center gap-1.5 transition shadow-sm">
         <i class="fa-solid fa-cloud-arrow-up text-white"></i>
         <span>Subir fotos o clips</span>
       </button>
 
       <!-- Estado de Telegram -->
-      <button onclick="openConfigModal()" id="tg-status-pill" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] hover:bg-[#F2EFE9] text-black border border-[#e0e0e0] flex items-center gap-1.5 transition">
-        <i class="fa-brands fa-telegram text-black text-sm"></i>
+      <button aria-label="Abrir configuración" title="Configuración" onclick="openConfigModal()" id="tg-status-pill" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] hover:bg-[#F2EFE9] text-black border border-[#e0e0e0] flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-sliders text-black text-sm"></i>
         <span id="tg-status-text">Configuración</span>
       </button>
 
-      <a href="https://tienda-marcos.pages.dev" target="_blank" class="hidden md:flex px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] text-black border border-[#e0e0e0] hover:bg-[#F2EFE9] items-center gap-1.5 transition">
+      <a aria-label="Abrir tienda online" title="Ver mi tienda" rel="noopener noreferrer" href="https://tienda-marcos.pages.dev" target="_blank" class="hidden md:flex px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] text-black border border-[#e0e0e0] hover:bg-[#F2EFE9] items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-up-right-from-square text-black text-xs"></i>
         <span>Ver mi Tienda Online</span>
       </a>
     </div>
   </header>
-  <nav role="tablist" aria-orientation="vertical" aria-label="Secciones del panel" class="flex gap-2 px-4 py-2 bg-white border-b border-[#e5e5e5] shrink-0">
-    <div class="sidebar-brand">Panel</div>
+  <button id="navigation-backdrop" type="button" aria-label="Cerrar menú de secciones" tabindex="-1" hidden></button>
+  <nav id="app-navigation" role="tablist" aria-orientation="vertical" aria-label="Secciones del panel" class="flex gap-2 px-4 py-2 bg-white border-b border-[#e5e5e5] shrink-0">
+    <div class="sidebar-brand"><span>Panel</span><button id="navigation-close" type="button" aria-label="Cerrar menú" hidden>×</button></div>
     <button id="panel-tab-chat" role="tab" aria-selected="true" aria-controls="panel-chat" onclick="showPanelTab('chat')" class="px-4 py-2 rounded-full text-sm font-semibold bg-black text-white"><i class="fa-solid fa-comment" aria-hidden="true"></i><span>Chat</span></button>
     <button id="panel-tab-tools" role="tab" aria-selected="false" aria-controls="panel-tools" tabindex="-1" onclick="showPanelTab('tools')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Herramientas</span></button>
     <button id="panel-tab-gallery" role="tab" aria-selected="false" aria-controls="panel-gallery" tabindex="-1" onclick="showPanelTab('gallery')" class="px-4 py-2 text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-images" aria-hidden="true"></i><span>Galería</span></button>
@@ -194,14 +178,14 @@
               title="Marcos: tocá acá para hablarle por micrófono"
               class="w-9 h-9 rounded-xl hover:bg-[#fafafa] text-black flex items-center justify-center transition shrink-0"
             >
-              <i class="fa-solid fa-microphone text-black text-sm" id="mic-icon"></i>
+              <i class="fa-solid fa-microphone text-black text-sm" id="mic-icon"></i><span id="mic-label" class="sr-only">Hablar</span>
             </button>
 
             <!-- Input Principal -->
             <input
               id="chat-input"
               type="text"
-              placeholder="Marcos, escribí un mensaje o pedí un Reel..."
+              aria-label="Mensaje para Ariel" placeholder="Escribí un mensaje…"
               class="flex-1 bg-transparent text-[#2C302E] placeholder-[#8A8F8B] text-xs sm:text-sm px-2 py-1.5 focus:outline-none"
               autocomplete="off"
             />
@@ -230,7 +214,7 @@
           </form>
 
           <!-- Disclaimer sutil inferior -->
-          <div class="flex items-center justify-center gap-2 text-[10px] text-[#9A9F9B] mt-2 text-center">
+          <div id="chat-caption" class="flex items-center justify-center gap-2 text-[10px] text-[#9A9F9B] mt-2 text-center">
             <span>Ariel • Asistente comercial</span>
             <span>•</span>
             <span>Aprende de tu negocio y usa tus fotos reales de Córdoba</span>
@@ -254,9 +238,9 @@
           </button>
         </div>
 
-        <p class="text-[11px] text-[#6B706C] mb-2">
+        <details id="reel-instructions" class="text-xs border border-[#eee] p-3"><summary class="cursor-pointer font-medium">Formato y preparación del reel</summary>        <p class="text-[11px] text-[#6B706C] mb-2">
           Seleccioná varias fotos o videos. Tocá los archivos en el orden del reel. Cada foto dura 3 segundos; los videos conservan su duración. Formato vertical 9:16 a pantalla completa, con recorte centrado y zoom más rápido en las fotos, sin audio. Las transiciones solapan hasta 0,3 segundos entre clips y reducen la duración total. Máximo 20 MB por archivo. En PC podés seleccionar varios con Ctrl o Mayús.
-        </p>
+        </p>        </details>
 
         <button type="button" onclick="showPanelTab('gallery')" class="border border-[#ddd] bg-white p-2 text-xs">Elegir desde mi galería</button>
         <!-- Archivos del reel actual -->
@@ -1854,5 +1838,7 @@
   <script src="/support-widget.js" defer></script>
   <script src="/gallery.js" defer></script>
 
+  <link rel="stylesheet" href="/app-responsive.css" />
+  <script src="/app-shell.js" defer></script>
 </body>
 </html>
