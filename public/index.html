@@ -3,35 +3,84 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hola Marcos | Tu Asistente Comercial Todo-en-Uno</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <meta name="theme-color" content="#171717" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Ariel" />
+  <link rel="apple-touch-icon" href="/icons/ariel-192.png" />
+  <link rel="icon" type="image/png" href="/icons/ariel-192.png" />
+  <script src="/auth-client.js"></script>
+  <script src="/pwa.js" defer></script>
+  <title>Ariel | Asistente comercial</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
+    [hidden] { display: none !important; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #F6F3EC;
+      font-family: "Poppins", sans-serif;
+      background-color: #fafafa;
       color: #2C302E;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-thumb { background: #CFC8BC; border-radius: 999px; }
+
+    /* Navegación lateral y superficies planas. */
+    *, *::before, *::after { border-radius: 0 !important; }
+    button, input, select, textarea { font-family: "Poppins", sans-serif; }
+    [class*="shadow"] { box-shadow: none !important; }
+    body { display: grid !important; grid-template-columns: 232px minmax(0,1fr); grid-template-rows: 64px minmax(0,1fr); height: 100dvh; background: #fff; }
+    body > header { grid-column: 2; grid-row: 1; min-width: 0; background: #fff; border-color: #e8e8e8; justify-content: flex-end; }
+    body > header > div:first-child { display: none; }
+    body > nav { grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 0 12px 20px; background: #f7f7f7; border: 0; border-right: 1px solid #e8e8e8; overflow-y: auto; }
+    .sidebar-brand { height: 64px; display: flex; align-items: center; padding: 0 12px; margin-bottom: 20px; font-size: 17px; font-weight: 600; flex-shrink: 0; }
+    body > nav [role="tab"] { text-align: left; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 46px; padding: 12px; font-size: 13px; font-weight: 500; color: #525252 !important; background: transparent !important; border: 0; border-left: 2px solid transparent; }
+    body > nav [role="tab"]:hover { background: #ededed !important; }
+    body > nav [role="tab"][aria-selected="true"] { background: #e9e9e9 !important; color: #151515 !important; border-left-color: #151515; font-weight: 600; }
+    body > nav [role="tab"] i { width: 18px; text-align: center; font-size: 14px; }
+    #panel-content { grid-column: 2; grid-row: 2; min-width: 0; background: #fff; }
+    #panel-chat { background: #fff; border: 0; }
+    #chat-box { padding-left: max(24px, calc((100% - 820px) / 2)); padding-right: max(24px, calc((100% - 820px) / 2)); }
+    .assistant-msg-container .msg-body-content { background: transparent; border-color: transparent; box-shadow: none; }
+    #panel-tools, #panel-analytics, #panel-status { background: #fafafa; padding: 24px; }
+    #analytics-filters > label { min-width: 0; max-width: 100%; }
+    #analytics-filters select, #analytics-filters input { max-width: 100%; min-width: 0; }
+    body > header > div:last-child { flex-wrap: wrap; justify-content: flex-end; }
+    #panel-status p, .msg-body-content { overflow-wrap: anywhere; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #454545; outline-offset: 3px; }
+    @media (max-width: 700px) {
+      body { grid-template-columns: 154px minmax(0,1fr); grid-template-rows: 58px minmax(0,1fr); }
+      body > nav { padding: 0 6px 16px; }
+      .sidebar-brand { height: 58px; padding: 0 10px; margin-bottom: 12px; }
+      body > nav [role="tab"] { font-size: 11px; padding: 10px 8px; gap: 7px; }
+      body > header { padding: 8px; }
+      body > header button { padding: 8px !important; font-size: 10px !important; }
+      body > header button i { display: none; }
+      #panel-tools, #panel-analytics, #panel-status { padding: 12px; }
+      #chat-box { padding-left: 12px; padding-right: 12px; }
+    }
+    @media (max-width: 440px) {
+      body { grid-template-columns: 120px minmax(0,1fr); }
+      body > nav [role="tab"] { gap: 5px; font-size: 10px; }
+      body > nav [role="tab"] i { width: 12px; font-size: 11px; }
+      body > header button { font-size: 9px !important; padding: 6px !important; }
+      body > header > div { gap: 4px; }
+    }
   </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden bg-[#F6F3EC] text-[#2C302E]">
+<body class="h-screen flex flex-col overflow-hidden bg-[#fafafa] text-[#2C302E]">
 
   <!-- BARRA SUPERIOR CÁLIDA Y PASTEL DIRIGIDA A MARCOS -->
-  <header class="bg-[#FFFFFF] border-b border-[#E2DDD3] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm">
+  <header class="bg-[#FFFFFF] border-b border-[#e5e5e5] px-4 py-3 flex items-center justify-between shrink-0 shadow-sm">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[#F0EDE6] border border-[#DDD7CD] flex items-center justify-center text-black text-lg font-bold">
+      <div class="w-10 h-10 rounded-xl bg-[#f4f4f4] border border-[#e0e0e0] flex items-center justify-center text-black text-lg font-bold">
         <i class="fa-solid fa-store text-black"></i>
       </div>
       <div>
-        <h1 class="font-bold text-sm sm:text-base text-[#2C302E] leading-tight" id="biz-name">
-          Hola Marcos • Tu Panel Comercial de Almohadas
-        </h1>
-        <p class="text-xs text-[#6B706C] flex items-center gap-2">
-          <span class="inline-block w-2 h-2 rounded-full bg-black"></span>
-          <span>Tus Reels con fotos/videos 100% reales • Tus números claros • Control por Voz y Telegram</span>
-        </p>
+        <h1 class="font-bold text-sm sm:text-base text-[#2C302E] leading-tight" id="biz-name">Panel</h1>
       </div>
     </div>
 
@@ -43,39 +92,51 @@
       </button>
 
       <!-- Estado de Telegram -->
-      <button onclick="openConfigModal()" id="tg-status-pill" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] hover:bg-[#F2EFE9] text-black border border-[#DDD7CD] flex items-center gap-1.5 transition">
+      <button onclick="openConfigModal()" id="tg-status-pill" class="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] hover:bg-[#F2EFE9] text-black border border-[#e0e0e0] flex items-center gap-1.5 transition">
         <i class="fa-brands fa-telegram text-black text-sm"></i>
-        <span id="tg-status-text">Conectar mi Telegram</span>
+        <span id="tg-status-text">Configuración</span>
       </button>
 
-      <a href="https://tienda-marcos.pages.dev" target="_blank" class="hidden md:flex px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] text-black border border-[#DDD7CD] hover:bg-[#F2EFE9] items-center gap-1.5 transition">
+      <a href="https://tienda-marcos.pages.dev" target="_blank" class="hidden md:flex px-3.5 py-1.5 rounded-full text-xs font-semibold bg-[#FFFFFF] text-black border border-[#e0e0e0] hover:bg-[#F2EFE9] items-center gap-1.5 transition">
         <i class="fa-solid fa-arrow-up-right-from-square text-black text-xs"></i>
         <span>Ver mi Tienda Online</span>
       </a>
     </div>
   </header>
+  <nav role="tablist" aria-orientation="vertical" aria-label="Secciones del panel" class="flex gap-2 px-4 py-2 bg-white border-b border-[#e5e5e5] shrink-0">
+    <div class="sidebar-brand">Panel</div>
+    <button id="panel-tab-chat" role="tab" aria-selected="true" aria-controls="panel-chat" onclick="showPanelTab('chat')" class="px-4 py-2 rounded-full text-sm font-semibold bg-black text-white"><i class="fa-solid fa-comment" aria-hidden="true"></i><span>Chat</span></button>
+    <button id="panel-tab-tools" role="tab" aria-selected="false" aria-controls="panel-tools" tabindex="-1" onclick="showPanelTab('tools')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Herramientas</span></button>
+    <button id="panel-tab-analytics" role="tab" aria-selected="false" aria-controls="panel-analytics" tabindex="-1" onclick="showPanelTab('analytics')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Analíticas</span></button>
+    <button id="panel-tab-status" role="tab" aria-selected="false" aria-controls="panel-status" tabindex="-1" onclick="showPanelTab('status')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-signal" aria-hidden="true"></i><span>Estado de tienda</span></button>
+    <div style="margin-top:auto;padding:20px 12px 0;border-top:1px solid #e8e8e8">
+      <button id="owner-logout" type="button" class="border px-3 py-2 text-xs w-full text-left mb-2">Cerrar sesión</button>
+      <button id="pwa-install" type="button" class="border px-3 py-2 text-xs w-full text-left">Instalar Ariel</button>
+      <p id="pwa-status" class="text-[10px] text-neutral-500 mt-2" role="status"></p>
+    </div>
+  </nav>
 
   <!-- CONTENEDOR PRINCIPAL: CHAT A LA IZQUIERDA + PANEL DE MARCOS A LA DERECHA -->
-  <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+  <div id="panel-content" class="flex-1 flex min-h-0 overflow-hidden">
 
     <!-- COLUMNA IZQUIERDA / CENTRAL: CHAT DE MARCOS ESTILO CHATGPT / GEMINI / ISA (7 COLUMNAS) -->
-    <section class="lg:col-span-7 flex flex-col bg-[#FAF8F5] border-r border-[#E2DDD3] h-full overflow-hidden">
-      
+    <section id="panel-chat" role="tabpanel" aria-labelledby="panel-tab-chat" class="w-full min-h-0 flex flex-col bg-[#ffffff] border-r border-[#e5e5e5] h-full overflow-hidden">
+
       <!-- Top Bar Minimalista y Limpio (Estilo ChatGPT / Gemini) -->
-      <div class="px-5 py-3 border-b border-[#EAE5DC] bg-[#FFFFFF]/80 backdrop-blur-sm flex items-center justify-between shrink-0">
+      <div class="px-5 py-3 border-b border-[#e8e8e8] bg-[#FFFFFF]/80 backdrop-blur-sm flex items-center justify-between shrink-0">
         <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-[#EAE7DF] text-black flex items-center justify-center font-bold text-sm shadow-xs">
+          <div class="w-8 h-8 rounded-full bg-[#f2f2f2] text-black flex items-center justify-center font-bold text-sm shadow-xs">
             <i class="fa-solid fa-sparkles text-black text-xs"></i>
           </div>
           <div>
             <div class="flex items-center gap-1.5">
-              <span class="text-xs sm:text-sm font-bold text-[#2C302E]">Asistente de Marcos</span>
-              <span class="inline-flex items-center gap-1 text-[10px] text-black font-semibold bg-[#EAE7DF] px-2 py-0.5 rounded-full">
+              <span class="text-xs sm:text-sm font-bold text-[#2C302E]">Ariel</span>
+              <span class="inline-flex items-center gap-1 text-[10px] text-black font-semibold bg-[#f2f2f2] px-2 py-0.5 rounded-full">
                 <span class="w-1.5 h-1.5 rounded-full bg-black animate-pulse"></span>
                 <span>En línea</span>
               </span>
             </div>
-            <p class="text-[10px] text-[#7A7F7C]">Ventas • Meta Ads • Reels de Almohadas</p>
+            <p class="text-[10px] text-[#7A7F7C]">Meta Ads • Google Ads • Búsqueda web • Tienda</p>
           </div>
         </div>
 
@@ -91,7 +152,7 @@
       </div>
 
       <!-- Indicador sutil de archivos seleccionados para el próximo Reel -->
-      <div id="selected-files-bar" class="hidden bg-[#EAE7DF] px-5 py-2.5 border-t border-[#DDD7CD] flex items-center justify-between text-xs">
+      <div id="selected-files-bar" class="hidden bg-[#f2f2f2] px-5 py-2.5 border-t border-[#e0e0e0] flex items-center justify-between text-xs">
         <div class="flex items-center gap-2 text-black font-semibold truncate">
           <i class="fa-solid fa-check-double text-black text-xs"></i>
           <span id="selected-files-text">0 archivos seleccionados</span>
@@ -111,55 +172,55 @@
       <input id="file-upload" type="file" accept="video/*,image/*" multiple class="hidden" onchange="handleFilesUpload(event)" />
 
       <!-- Barra de Escritura: Cápsula Flotante (ChatGPT / Gemini / ISA Style) -->
-      <div class="p-3 sm:p-4 bg-[#FAF8F5] border-t border-[#EAE5DC] shrink-0">
+      <div class="p-3 sm:p-4 bg-[#ffffff] border-t border-[#e8e8e8] shrink-0">
         <div class="max-w-3xl mx-auto">
-          <form id="chat-form" class="bg-[#FFFFFF] border border-[#DDD7CD] focus-within:border-black focus-within:ring-2 focus-within:ring-neutral-200 rounded-2xl sm:rounded-3xl p-1.5 sm:p-2 flex items-center gap-1.5 shadow-sm transition">
+          <form id="chat-form" class="bg-[#FFFFFF] border border-[#e0e0e0] focus-within:border-black focus-within:ring-2 focus-within:ring-neutral-200 rounded-2xl sm:rounded-3xl p-1.5 sm:p-2 flex items-center gap-1.5 shadow-sm transition">
             <!-- Botón de Adjuntar Archivos -->
-            <button 
+            <button
               type="button"
               onclick="document.getElementById('file-upload').click()"
               title="Adjuntar clips cortos o fotos reales"
-              class="w-9 h-9 rounded-xl hover:bg-[#F6F3EC] text-black flex items-center justify-center transition shrink-0"
+              class="w-9 h-9 rounded-xl hover:bg-[#fafafa] text-black flex items-center justify-center transition shrink-0"
             >
               <i class="fa-solid fa-paperclip text-black text-sm"></i>
             </button>
 
             <!-- Botón de Micrófono -->
-            <button 
+            <button
               type="button"
               id="btn-mic"
               onclick="toggleVoiceRecording()"
               title="Marcos: tocá acá para hablarle por micrófono"
-              class="w-9 h-9 rounded-xl hover:bg-[#F6F3EC] text-black flex items-center justify-center transition shrink-0"
+              class="w-9 h-9 rounded-xl hover:bg-[#fafafa] text-black flex items-center justify-center transition shrink-0"
             >
               <i class="fa-solid fa-microphone text-black text-sm" id="mic-icon"></i>
             </button>
 
             <!-- Input Principal -->
-            <input 
-              id="chat-input" 
-              type="text" 
-              placeholder="Marcos, escribí un mensaje o pedí un Reel..." 
+            <input
+              id="chat-input"
+              type="text"
+              placeholder="Marcos, escribí un mensaje o pedí un Reel..."
               class="flex-1 bg-transparent text-[#2C302E] placeholder-[#8A8F8B] text-xs sm:text-sm px-2 py-1.5 focus:outline-none"
               autocomplete="off"
             />
 
             <!-- Toggle de Respuesta por Voz -->
-            <button 
+            <button
               type="button"
               id="btn-voice-toggle"
               onclick="toggleVoiceReplyMode()"
               title="Activar/Desactivar respuesta con voz"
-              class="px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 bg-[#FFFFFF] text-black border border-[#DDD7CD] transition shrink-0"
+              class="px-2.5 py-1 rounded-full text-[11px] font-semibold flex items-center gap-1 bg-[#FFFFFF] text-black border border-[#e0e0e0] transition shrink-0"
             >
               <i class="fa-solid fa-volume-high text-black text-[10px]" id="voice-toggle-icon"></i>
               <span class="hidden sm:inline" id="voice-toggle-text">Voz ON</span>
             </button>
 
             <!-- Botón Circular de Enviar (Estilo ChatGPT / Gemini) -->
-            <button 
+            <button
               id="btn-send"
-              type="submit" 
+              type="submit"
               title="Enviar mensaje"
               class="w-9 h-9 rounded-full bg-black hover:bg-neutral-800 text-white flex items-center justify-center transition shrink-0 shadow-xs"
             >
@@ -169,7 +230,7 @@
 
           <!-- Disclaimer sutil inferior -->
           <div class="flex items-center justify-center gap-2 text-[10px] text-[#9A9F9B] mt-2 text-center">
-            <span>Asistente comercial de Marcos</span>
+            <span>Ariel • Asistente comercial</span>
             <span>•</span>
             <span>Aprende de tu negocio y usa tus fotos reales de Córdoba</span>
           </div>
@@ -178,16 +239,16 @@
     </section>
 
     <!-- COLUMNA DERECHA: HERRAMIENTAS DE MARCOS (ARCHIVOS REALES + REELS + TABLA EDITABLE) (5 COLUMNAS) -->
-    <aside class="lg:col-span-5 flex flex-col bg-[#F6F3EC] h-full overflow-y-auto p-4 space-y-4">
+    <aside id="panel-tools" role="tabpanel" aria-labelledby="panel-tab-tools" hidden class="w-full min-h-0 flex flex-col bg-[#fafafa] h-full overflow-y-auto p-4 space-y-4">
 
       <!-- BLOQUE 1: SUBIR CLIPS CORTOS O FOTOS REALES DEL CELULAR DE MARCOS -->
-      <div class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl p-4 shadow-sm">
+      <div class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl p-4 shadow-sm">
         <div class="flex items-center justify-between mb-2">
           <h2 class="font-bold text-sm text-[#2C302E] flex items-center gap-2">
-            <i class="fa-solid fa-mobile-screen-button text-[#6F9279]"></i>
+            <i class="fa-solid fa-mobile-screen-button text-[#171717]"></i>
             <span>1. Marcos: Tus Clips Cortos y Fotos Reales</span>
           </h2>
-          <button onclick="document.getElementById('file-upload').click()" id="btn-upload-panel" class="px-3 py-1 rounded-lg bg-[#DCE8DE] hover:bg-[#CBE0CE] text-[#2F4B38] border border-[#BFD3C3] text-xs font-bold flex items-center gap-1.5 transition">
+          <button onclick="document.getElementById('file-upload').click()" id="btn-upload-panel" class="px-3 py-1 rounded-lg bg-[#f2f2f2] hover:bg-[#CBE0CE] text-[#2F4B38] border border-[#BFD3C3] text-xs font-bold flex items-center gap-1.5 transition">
             <i class="fa-solid fa-plus"></i> Subir desde Celu/PC
           </button>
         </div>
@@ -207,13 +268,13 @@
         </div>
 
         <!-- Selector de ángulo + botón directo de ensamblaje -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-[#EAE5DC]">
-          <select id="reel-angle-select" class="bg-[#F6F3EC] text-[#2C302E] text-xs rounded-xl px-3 py-2 border border-[#DCD6CA] flex-1 focus:outline-none focus:border-[#6F9279]">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-[#e8e8e8]">
+          <select id="reel-angle-select" class="bg-[#fafafa] text-[#2C302E] text-xs rounded-xl px-3 py-2 border border-[#e5e5e5] flex-1 focus:outline-none focus:border-[#171717]">
             <option value="cervical">Opción 1: Alivio Dolor Cervical y Postura</option>
             <option value="pack">Opción 2: Oferta Pack x2 Ahorro (-15% Transf.)</option>
             <option value="rebote">Opción 3: Demostración Densidad y Rebote Real</option>
           </select>
-          <button onclick="buildReelFromSelected()" id="btn-build-reel" class="bg-[#6F9279] hover:bg-[#5B7B64] text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition shrink-0 shadow-sm">
+          <button onclick="buildReelFromSelected()" id="btn-build-reel" class="bg-[#171717] hover:bg-[#333333] text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition shrink-0 shadow-sm">
             <i class="fa-solid fa-film"></i>
             <span>Armar mi Reel MP4</span>
           </button>
@@ -221,14 +282,14 @@
       </div>
 
       <!-- BLOQUE 2: REELS TERMINADOS DE MARCOS -->
-      <div class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl p-4 shadow-sm">
+      <div class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl p-4 shadow-sm">
         <div class="flex items-center justify-between mb-3">
           <h2 class="font-bold text-sm text-[#2C302E] flex items-center gap-2">
-            <i class="fa-solid fa-clapperboard text-[#6F9279]"></i>
+            <i class="fa-solid fa-clapperboard text-[#171717]"></i>
             <span>2. Tus Reels Listos para Descargar (Sin Voz • 9:16)</span>
           </h2>
           <div class="flex items-center gap-1.5">
-            <span class="text-[11px] bg-[#DCE8DE] text-[#2F4B38] px-2.5 py-0.5 rounded-full font-semibold" id="reels-count">0 videos</span>
+            <span class="text-[11px] bg-[#f2f2f2] text-[#2F4B38] px-2.5 py-0.5 rounded-full font-semibold" id="reels-count">0 videos</span>
             <button type="button" onclick="deleteReelFile('ALL')" title="Eliminar todos los Reels guardados" class="text-[11px] bg-[#F5E6E4] hover:bg-[#EBD0CC] text-[#9E4B42] border border-[#E0C2BE] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 transition">
               <i class="fa-solid fa-trash-can text-[10px]"></i> Vaciar
             </button>
@@ -240,36 +301,36 @@
       </div>
 
       <!-- BLOQUE 3: TABLA EDITABLE DE COSTOS, DEVOLUCIONES Y CPA DE MARCOS -->
-      <div id="products-card" class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl p-4 shadow-sm">
+      <div id="products-card" class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl p-4 shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
           <h2 class="font-bold text-sm text-[#2C302E] flex items-center gap-2">
             <i class="fa-solid fa-calculator text-[#9A6B4C]"></i>
             <span>3. Tus Costos, Ganancia Limpia y CPA Ads (Editable)</span>
           </h2>
           <div class="flex items-center gap-1.5">
-            <button type="button" onclick="addNewProductRow()" class="px-2.5 py-1 rounded-lg bg-[#F6F3EC] hover:bg-[#EAE5DC] text-[#3B5E46] border border-[#CFD8D0] text-[11px] font-bold flex items-center gap-1 transition">
+            <button type="button" onclick="addNewProductRow()" class="px-2.5 py-1 rounded-lg bg-[#fafafa] hover:bg-[#e8e8e8] text-[#3B5E46] border border-[#CFD8D0] text-[11px] font-bold flex items-center gap-1 transition">
               <i class="fa-solid fa-plus"></i> Agregar Producto
             </button>
-            <button type="button" id="btn-save-products" onclick="saveProductsTable()" class="px-3 py-1 rounded-lg bg-[#6F9279] hover:bg-[#5B7B64] text-white text-[11px] font-bold flex items-center gap-1 transition shadow-sm">
+            <button type="button" id="btn-save-products" onclick="saveProductsTable()" class="px-3 py-1 rounded-lg bg-[#171717] hover:bg-[#333333] text-white text-[11px] font-bold flex items-center gap-1 transition shadow-sm">
               <i class="fa-solid fa-floppy-disk"></i> <span>Guardar</span>
             </button>
           </div>
         </div>
 
         <!-- Controles editables de % Devoluciones y % Descuento Transferencia -->
-        <div class="flex flex-wrap items-center gap-3 bg-[#F6F3EC] border border-[#E2DDD3] rounded-xl px-3 py-2 mb-3 text-[11px] text-[#4A504C]">
+        <div class="flex flex-wrap items-center gap-3 bg-[#fafafa] border border-[#e5e5e5] rounded-xl px-3 py-2 mb-3 text-[11px] text-[#4A504C]">
           <label class="flex items-center gap-1.5">
             <span>Reserva Garantía/Devoluciones:</span>
-            <input id="inp-return-pct" type="number" step="0.5" min="0" max="30" value="2" oninput="recalcProductsLive()" onchange="saveProductsTable()" class="w-14 bg-[#FFFFFF] text-[#7A5438] font-bold px-2 py-1 rounded border border-[#CFC8BC] text-center focus:outline-none focus:border-[#6F9279]" />
+            <input id="inp-return-pct" type="number" step="0.5" min="0" max="30" value="2" oninput="recalcProductsLive()" onchange="saveProductsTable()" class="w-14 bg-[#FFFFFF] text-[#7A5438] font-bold px-2 py-1 rounded border border-[#CFC8BC] text-center focus:outline-none focus:border-[#171717]" />
             <span class="font-bold text-[#7A5438]">%</span>
           </label>
           <span class="text-[#CFC8BC]">|</span>
           <label class="flex items-center gap-1.5">
             <span>Descuento Transferencia:</span>
-            <input id="inp-transf-pct" type="number" step="1" min="0" max="50" value="15" oninput="recalcProductsLive()" onchange="saveProductsTable()" class="w-14 bg-[#FFFFFF] text-[#3B5E46] font-bold px-2 py-1 rounded border border-[#CFC8BC] text-center focus:outline-none focus:border-[#6F9279]" />
+            <input id="inp-transf-pct" type="number" step="1" min="0" max="50" value="15" oninput="recalcProductsLive()" onchange="saveProductsTable()" class="w-14 bg-[#FFFFFF] text-[#3B5E46] font-bold px-2 py-1 rounded border border-[#CFC8BC] text-center focus:outline-none focus:border-[#171717]" />
             <span class="font-bold text-[#3B5E46]">% OFF</span>
           </label>
-          <span id="save-status-badge" class="ml-auto text-[10px] text-[#3B5E46] bg-[#DCE8DE] px-2 py-0.5 rounded-full font-bold hidden">
+          <span id="save-status-badge" class="ml-auto text-[10px] text-[#3B5E46] bg-[#f2f2f2] px-2 py-0.5 rounded-full font-bold hidden">
             <i class="fa-solid fa-check"></i> Guardado
           </span>
         </div>
@@ -277,7 +338,7 @@
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs border-collapse">
             <thead>
-              <tr class="border-b border-[#E2DDD3] text-[#6B706C] text-[11px]">
+              <tr class="border-b border-[#e5e5e5] text-[#6B706C] text-[11px]">
                 <th class="py-2 pr-2">Producto (Hacé clic para editar)</th>
                 <th class="py-2 px-1.5">Venta Lista ($)</th>
                 <th class="py-2 px-1.5">Tu Costo ($)</th>
@@ -293,204 +354,21 @@
         </div>
       </div>
 
-      <!-- BLOQUE 4: ANALÍTICA EN VIVO DE LA TIENDA WHATSAPP BUSINESS DE MARCOS -->
-      <div id="analytics-card" class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl p-4 shadow-sm space-y-3">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 class="font-bold text-sm text-[#2C302E] flex items-center gap-2">
-              <i class="fa-solid fa-chart-line text-[#4A7696]"></i>
-              <span>4. Analítica de tu Tienda WhatsApp Business</span>
-            </h2>
-            <p class="text-[11px] text-[#6B706C]">
-              Marcos, acá ves en tiempo real qué hacen los clientes en <a href="https://tienda-marcos.pages.dev" target="_blank" class="underline font-semibold text-[#355670]">tienda-marcos.pages.dev</a>
-            </p>
-          </div>
-          <div class="flex items-center gap-1.5">
-            <button type="button" onclick="sendQuickCommand('Analizame las visualizaciones, clics en pedir, carritos abandonados y permanencia de mi tienda WhatsApp')" class="px-2.5 py-1 rounded-lg bg-[#E6EFF6] hover:bg-[#D6E5F0] text-[#2D4A60] border border-[#C5D8E8] text-[11px] font-bold flex items-center gap-1 transition">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Diagnóstico
-            </button>
-            <button type="button" onclick="resetStoreAnalytics()" title="Poner contadores en cero" class="px-2 py-1 rounded-lg bg-[#F6F3EC] hover:bg-[#EAE5DC] text-[#6B706C] border border-[#DCD6CA] text-[11px] font-semibold transition">
-              <i class="fa-solid fa-rotate-left"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- GRILLA DE 4 KPIS PRINCIPALES EN PASTEL -->
-        <div class="grid grid-cols-2 gap-2.5">
-          <!-- KPI 1: Visualizaciones y Visitantes -->
-          <div class="bg-[#F6F3EC] border border-[#E2DDD3] rounded-xl p-2.5">
-            <div class="flex items-center justify-between text-[11px] text-[#6B706C] mb-0.5">
-              <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye text-black text-xs"></i> Visualizaciones</span>
-              <span class="text-[10px] bg-[#EAE5DC] text-[#4A504C] px-1.5 py-0.5 rounded font-semibold" id="an-visitors">0 únicos</span>
-            </div>
-            <div class="text-lg font-extrabold text-[#2C302E]" id="an-pageviews">0</div>
-            <div class="text-[10px] text-[#6B706C]">Vistas totales del catálogo</div>
-          </div>
-
-          <!-- KPI 2: Clics en Pedir por WhatsApp -->
-          <div class="bg-[#E5EFE7] border border-[#C6DBC9] rounded-xl p-2.5">
-            <div class="flex items-center justify-between text-[11px] text-[#2F4B38] mb-0.5">
-              <span class="font-semibold flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-black text-xs"></i> Clic en Pedir WA</span>
-              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#2F4B38] px-1.5 py-0.5 rounded font-bold" id="an-conv-rate">0% conv.</span>
-            </div>
-            <div class="text-lg font-extrabold text-[#2F4B38]" id="an-wa-clicks">0</div>
-            <div class="text-[10px] text-[#3B5E46]">Pedidos enviados a tu WhatsApp</div>
-          </div>
-
-          <!-- KPI 3: Carritos Abandonados -->
-          <div class="bg-[#F5EAE0] border border-[#E4D1C0] rounded-xl p-2.5">
-            <div class="flex items-center justify-between text-[11px] text-[#7A5438] mb-0.5">
-              <span class="font-semibold flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping text-black text-xs"></i> Carrito Abandonado</span>
-              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#7A5438] px-1.5 py-0.5 rounded font-bold" id="an-abandon-rate">0%</span>
-            </div>
-            <div class="flex items-baseline gap-1.5">
-              <span class="text-lg font-extrabold text-[#7A5438]" id="an-abandoned-count">0</span>
-              <span class="text-xs font-bold text-[#8A5A3B]" id="an-abandoned-value">($0)</span>
-            </div>
-            <div class="text-[10px] text-[#7A5438]">Dejaron productos sin pedir</div>
-          </div>
-
-          <!-- KPI 4: Permanencia y Detección de Clics -->
-          <div class="bg-[#E8F0F6] border border-[#C9D9E6] rounded-xl p-2.5">
-            <div class="flex items-center justify-between text-[11px] text-[#2D4A60] mb-0.5">
-              <span class="font-semibold flex items-center gap-1.5"><i class="fa-regular fa-clock text-black text-xs"></i> Permanencia y Clics</span>
-              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#2D4A60] px-1.5 py-0.5 rounded font-bold" id="an-avg-clicks">0 clics/vis.</span>
-            </div>
-            <div class="flex items-baseline justify-between">
-              <span class="text-base font-extrabold text-[#2D4A60]" id="an-dwell-time">0m 00s</span>
-              <span class="text-xs font-bold text-[#355670]" id="an-total-clicks">0 clics</span>
-            </div>
-            <div class="text-[10px] text-[#3E5669]">Tiempo promedio y clics detectados</div>
-          </div>
-        </div>
-
-        <!-- ORIGEN DEL TRÁFICO Y RENDIMIENTO POR ANUNCIO ESPECÍFICO -->
-        <div class="bg-[#F9F7F3] border border-[#E2DDD3] rounded-xl p-3">
-          <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
-            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
-              <i class="fa-solid fa-bullhorn text-black"></i>
-              <span>Origen de Visitas y Rendimiento por Anuncio Específico</span>
-            </h3>
-            <button type="button" onclick="document.getElementById('utm-links-box').classList.toggle('hidden')" class="text-[10px] px-2 py-0.5 rounded-lg bg-[#E6EFF6] hover:bg-[#D6E5F0] text-[#2D4A60] border border-[#C5D8E8] font-bold flex items-center gap-1 transition">
-              <i class="fa-solid fa-link text-black text-xs"></i> Links por Anuncio
-            </button>
-          </div>
-
-          <!-- Caja desplegable con links listos para copiar y pegar en cada anuncio de Meta Ads -->
-          <div id="utm-links-box" class="hidden bg-[#F6F3EC] border border-[#DCD6CA] rounded-xl p-2.5 mb-2.5 space-y-2 text-[11px]">
-            <p class="text-[#4A504C] leading-snug">
-              <b>Marcos:</b> Pegá estos links en tus anuncios de Instagram/Facebook para que el panel detecte automáticamente de qué video vino cada visita, clic, carrito o pedido:
-            </p>
-            <div class="space-y-1.5">
-              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#E2DDD3] rounded-lg px-2 py-1">
-                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 1: Dolor Cervical (IG Ads)</span>
-                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Instagram_Ads&anuncio=Reel_1_Dolor_Cervical', this)" class="px-2 py-0.5 rounded bg-[#DCE8DE] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
-                  Copiar Link
-                </button>
-              </div>
-              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#E2DDD3] rounded-lg px-2 py-1">
-                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 2: Pack x2 Ahorro (FB Ads)</span>
-                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Facebook_Ads&anuncio=Reel_2_Pack_x2_Ahorro', this)" class="px-2 py-0.5 rounded bg-[#DCE8DE] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
-                  Copiar Link
-                </button>
-              </div>
-              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#E2DDD3] rounded-lg px-2 py-1">
-                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 3: Densidad y Rebote (IG Ads)</span>
-                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Instagram_Ads&anuncio=Reel_3_Densidad_Rebote', this)" class="px-2 py-0.5 rounded bg-[#DCE8DE] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
-                  Copiar Link
-                </button>
-              </div>
-              <div class="flex items-center justify-between gap-2 bg-[#E8F0F6] border border-[#C9D9E6] rounded-lg px-2 py-1">
-                <span class="truncate font-semibold text-[#2D4A60] flex items-center gap-1"><i class="fa-solid fa-bolt text-black text-[10px]"></i> Fórmula Dinámica Meta Ads (Detecta cualquier anuncio solo)</span>
-                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen={{site_source_name}}&anuncio={{ad.name}}', this)" class="px-2 py-0.5 rounded bg-[#FFFFFF] hover:bg-[#DCE8DE] text-[#2D4A60] border border-[#BFD3C3] font-bold text-[10px] shrink-0">
-                  Copiar Fórmula
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-[11px] border-collapse">
-              <thead>
-                <tr class="border-b border-[#E2DDD3] text-[#6B706C]">
-                  <th class="py-1.5 pr-2">Anuncio / Origen</th>
-                  <th class="py-1.5 px-1 text-center"><i class="fa-solid fa-eye text-black text-[10px] mr-1"></i>Visitas</th>
-                  <th class="py-1.5 px-1 text-center"><i class="fa-regular fa-clock text-black text-[10px] mr-1"></i>Perm.</th>
-                  <th class="py-1.5 px-1 text-center text-[#2F4B38]"><i class="fa-brands fa-whatsapp text-black text-[10px] mr-1"></i>Pedidos WA</th>
-                  <th class="py-1.5 pl-1 text-center text-[#7A5438]"><i class="fa-solid fa-cart-arrow-down text-black text-[10px] mr-1"></i>Aband.</th>
-                </tr>
-              </thead>
-              <tbody id="an-ads-tbody" class="divide-y divide-[#EFECE4]">
-                <!-- Renderizado dinámico de anuncios -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TABLA DE PRODUCTOS MÁS VISTOS Y CARRITOS POR PRODUCTO -->
-        <div class="bg-[#F9F7F3] border border-[#E2DDD3] rounded-xl p-3">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
-              <i class="fa-solid fa-ranking-star text-black"></i>
-              <span>Productos Más Vistos, Pedidos y Abandonos</span>
-            </h3>
-            <span class="text-[10px] text-[#6B706C]" id="an-add-to-cart-total">0 agregados al carrito</span>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-[11px] border-collapse">
-              <thead>
-                <tr class="border-b border-[#E2DDD3] text-[#6B706C]">
-                  <th class="py-1.5 pr-2">Producto</th>
-                  <th class="py-1.5 px-1.5 text-center"><i class="fa-solid fa-eye text-black text-[10px] mr-1"></i>Vistas</th>
-                  <th class="py-1.5 px-1.5 text-center"><i class="fa-solid fa-cart-plus text-black text-[10px] mr-1"></i>Carrito</th>
-                  <th class="py-1.5 px-1.5 text-center text-[#2F4B38]"><i class="fa-brands fa-whatsapp text-black text-[10px] mr-1"></i>Pedidos</th>
-                  <th class="py-1.5 pl-1.5 text-center text-[#7A5438]"><i class="fa-solid fa-triangle-exclamation text-black text-[10px] mr-1"></i>Aband.</th>
-                </tr>
-              </thead>
-              <tbody id="an-products-tbody" class="divide-y divide-[#EFECE4]">
-                <!-- Renderizado dinámico -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- ACTIVIDAD RECIENTE DE VISITANTES (CLICS, PERMANENCIA, ORIGEN Y ESTADO EN TIEMPO REAL) -->
-        <div class="bg-[#F9F7F3] border border-[#E2DDD3] rounded-xl p-3">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
-              <i class="fa-solid fa-user-clock text-[#4A7696]"></i>
-              <span>Últimas Visitas (Origen del Anuncio, Clics y Permanencia)</span>
-            </h3>
-            <div class="flex items-center gap-1">
-              <button type="button" onclick="simulateStoreEvent('whatsapp_order')" title="Probar cómo entra un pedido de WhatsApp desde un anuncio" class="text-[10px] px-2 py-0.5 rounded bg-[#DCE8DE] hover:bg-[#CBE0CE] text-[#2F4B38] font-semibold transition">
-                + Test Pedido WA
-              </button>
-              <button type="button" onclick="simulateStoreEvent('abandoned_cart')" title="Probar cómo se detecta un carrito abandonado desde un anuncio" class="text-[10px] px-2 py-0.5 rounded bg-[#F5EAE0] hover:bg-[#EBD9C8] text-[#7A5438] font-semibold transition">
-                + Test Abandono
-              </button>
-            </div>
-          </div>
-          <div id="an-sessions-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
-            <!-- Renderizado dinámico -->
-          </div>
-        </div>
-      </div>
-
       <!-- BLOQUE 5: MEMORIA Y APRENDIZAJE PERMANENTE DE MARCOS -->
-      <div class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl p-4 shadow-sm space-y-3">
-        <div class="flex items-center justify-between border-b border-[#EAE5DC] pb-2">
+      <div class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl p-4 shadow-sm space-y-3">
+        <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-2">
           <h2 class="font-bold text-xs sm:text-sm text-[#2C302E] flex items-center gap-2">
-            <i class="fa-solid fa-brain text-[#6F9279]"></i>
+            <i class="fa-solid fa-brain text-[#171717]"></i>
             <span>5. Memoria Aprendida de tu Negocio (Persistente)</span>
           </h2>
-          <span id="memory-count-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-[#DCE8DE] text-[#2F4B38] font-bold">0 reglas</span>
+          <span id="memory-count-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-[#f2f2f2] text-[#2F4B38] font-bold">0 reglas</span>
         </div>
         <p class="text-[11px] text-[#6B706C] leading-relaxed">
           Todo lo que le enseñes acá o en el chat diciendo <b>"Acordate que..."</b> queda guardado para siempre y lo usa al responderte o armar campañas.
         </p>
         <div class="flex gap-1.5">
-          <input id="inp-new-memory" type="text" placeholder="Ej: Acordate que los sábados repartimos en Villa Allende..." class="flex-1 bg-[#F6F3EC] text-[#2C302E] text-xs px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#6F9279]" onkeydown="if(event.key==='Enter'){event.preventDefault();addMemoryRule();}" />
-          <button type="button" onclick="addMemoryRule()" class="px-3 py-2 rounded-lg bg-[#6F9279] hover:bg-[#5B7B64] text-white text-xs font-bold shrink-0 transition">
+          <input id="inp-new-memory" type="text" placeholder="Ej: Acordate que los sábados repartimos en Villa Allende..." class="flex-1 bg-[#fafafa] text-[#2C302E] text-xs px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#171717]" onkeydown="if(event.key==='Enter'){event.preventDefault();addMemoryRule();}" />
+          <button type="button" onclick="addMemoryRule()" class="px-3 py-2 rounded-lg bg-[#171717] hover:bg-[#333333] text-white text-xs font-bold shrink-0 transition">
             + Enseñar
           </button>
         </div>
@@ -500,7 +378,7 @@
       </div>
 
       <!-- BLOQUE 6: USARLO DESDE EL CELULAR POR TELEGRAM CON VOZ -->
-      <div class="bg-[#E8F0F6] border border-[#C9D9E6] rounded-2xl p-4 space-y-2">
+      <div class="bg-[#f3f3f3] border border-[#C9D9E6] rounded-2xl p-4 space-y-2">
         <div class="flex items-center justify-between">
           <h3 class="font-bold text-xs sm:text-sm text-[#2D4A60] flex items-center gap-2">
             <i class="fa-brands fa-telegram text-base text-black"></i>
@@ -516,15 +394,231 @@
       </div>
 
     </aside>
+    <section id="panel-analytics" role="tabpanel" aria-labelledby="panel-tab-analytics" hidden class="w-full min-h-0 h-full overflow-y-auto bg-[#fafafa] p-4 space-y-4">
+      <!-- BLOQUE 4: ANALÍTICA EN VIVO DE LA TIENDA WHATSAPP BUSINESS DE MARCOS -->
+      <p class="text-xs text-[#6B706C]">Los filtros incluyen solo eventos fechados desde esta actualización. El historial anterior sin fecha se conserva aparte y no se mezcla con estos resultados.</p>
+      <form id="analytics-filters" class="flex flex-wrap items-end gap-3 bg-white border rounded-xl p-4" onsubmit="event.preventDefault();refreshAnalytics()">
+        <label class="text-xs">Desde (Córdoba)<input id="an-start" type="date" class="block border rounded-lg p-2 mt-1" /></label>
+        <label class="text-xs">Hasta (inclusive)<input id="an-end" type="date" class="block border rounded-lg p-2 mt-1" /></label>
+        <label class="text-xs">Producto<select id="an-product" class="block border rounded-lg p-2 mt-1 max-w-xs"><option value="">Todos los productos</option></select></label>
+        <label class="text-xs">Campaña<select id="an-campaign" class="block border rounded-lg p-2 mt-1 max-w-xs"><option value="">Todas las campañas</option></select></label>
+        <button class="bg-black text-white rounded-full px-4 py-2 text-sm" type="submit">Aplicar filtros</button>
+        <button class="border rounded-full px-4 py-2 text-sm" type="button" onclick="clearAnalyticsFilters()">Limpiar filtros</button>
+        <button class="border rounded-full px-4 py-2 text-sm" type="button" onclick="sendQuickCommand('Explicame las analíticas de los filtros seleccionados con palabras simples. Qué significa cada número y qué puedo concluir, sin inventar datos.')">Ariel, explicame estos datos</button>
+      </form>
+      <p id="analytics-filter-status" role="status" class="text-xs text-[#6B706C]"></p>
+      <details class="text-sm bg-white border rounded-xl p-4"><summary class="cursor-pointer font-semibold">¿Cómo leo estos números?</summary><p class="mt-2">Las vistas cuentan aperturas, no personas. Una sesión es una visita del navegador. Los clics a WhatsApp muestran intención de consultar, pero no confirman mensajes ni compras. La permanencia es una estimación con los tiempos recibidos. Un posible abandono no prueba que el cliente se haya ido definitivamente. Sin gasto y ventas confirmadas, no podemos saber si un anuncio es rentable.</p></details>
+      <div class="flex flex-wrap items-center gap-2" role="group" aria-label="Vista de analíticas">
+        <span class="text-sm mr-2">Ver como</span>
+        <button id="an-view-table" type="button" aria-pressed="true" onclick="setAnalyticsView('table')" class="border px-4 py-2 text-sm bg-black text-white">Tablas</button>
+        <button id="an-view-chart" type="button" aria-pressed="false" onclick="setAnalyticsView('chart')" class="border px-4 py-2 text-sm">Gráfico</button>
+      </div>
+      <section id="analytics-chart" hidden class="bg-white border p-4 space-y-4" aria-label="Gráfico de actividad de la tienda">
+        <div class="flex flex-wrap justify-between items-center gap-3"><h2 class="font-semibold">Actividad por día</h2>
+          <label class="text-xs">Métrica<select id="an-chart-metric" class="border p-2 ml-2" onchange="renderAnalyticsChart()"><option value="pageViews">Vistas registradas</option><option value="addToCartCount">Agregados al carrito</option><option value="whatsappCheckoutClicks">Clics a WhatsApp</option></select></label>
+        </div>
+        <p class="text-xs text-neutral-500">Respeta los filtros seleccionados y el horario de Córdoba. Solo se incluyen días con eventos recibidos; un día sin registros no demuestra ausencia de visitas. Los clics no son ventas.</p>
+        <p id="an-chart-empty" class="text-sm py-10 text-center" role="status"></p>
+        <div id="an-chart-canvas" class="overflow-x-auto"></div>
+      </section>
+      <div id="analytics-card" class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl p-4 shadow-sm space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 class="font-bold text-sm text-[#2C302E] flex items-center gap-2">
+              <i class="fa-solid fa-chart-line text-[#4A7696]"></i>
+              <span>Analíticas de la tienda</span>
+            </h2>
+            <p class="text-[11px] text-[#6B706C]">
+              Actividad registrada para <a href="https://tienda-marcos.pages.dev" target="_blank" class="underline font-semibold text-[#355670]">tienda-marcos.pages.dev</a>
+            </p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="sendQuickCommand('Analizame las visualizaciones, clics en pedir, carritos abandonados y permanencia de mi tienda WhatsApp')" class="px-2.5 py-1 rounded-lg bg-[#E6EFF6] hover:bg-[#D6E5F0] text-[#2D4A60] border border-[#C5D8E8] text-[11px] font-bold flex items-center gap-1 transition">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Diagnóstico
+            </button>
+          </div>
+        </div>
+
+        <!-- GRILLA DE 4 KPIS PRINCIPALES EN PASTEL -->
+        <div class="grid grid-cols-2 gap-2.5">
+          <!-- KPI 1: Visualizaciones y Visitantes -->
+          <div class="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-2.5">
+            <div class="flex items-center justify-between text-[11px] text-[#6B706C] mb-0.5">
+              <span class="flex items-center gap-1.5"><i class="fa-solid fa-eye text-black text-xs"></i> Vistas registradas</span>
+              <span class="text-[10px] bg-[#e8e8e8] text-[#4A504C] px-1.5 py-0.5 rounded font-semibold" id="an-visitors">0 únicos</span>
+            </div>
+            <div class="text-lg font-extrabold text-[#2C302E]" id="an-pageviews">0</div>
+            <div class="text-[10px] text-[#6B706C]">Catálogo completo o producto seleccionado</div>
+          </div>
+
+          <!-- KPI 2: Clics en Pedir por WhatsApp -->
+          <div class="bg-[#E5EFE7] border border-[#C6DBC9] rounded-xl p-2.5">
+            <div class="flex items-center justify-between text-[11px] text-[#2F4B38] mb-0.5">
+              <span class="font-semibold flex items-center gap-1.5"><i class="fa-brands fa-whatsapp text-black text-xs"></i> Clic en Pedir WA</span>
+              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#2F4B38] px-1.5 py-0.5 rounded font-bold" id="an-conv-rate">0% clics WA</span>
+            </div>
+            <div class="text-lg font-extrabold text-[#2F4B38]" id="an-wa-clicks">0</div>
+            <div class="text-[10px] text-[#3B5E46]">Clics de salida; no confirman mensajes ni ventas</div>
+          </div>
+
+          <!-- KPI 3: Carritos Abandonados -->
+          <div class="bg-[#f5f5f5] border border-[#E4D1C0] rounded-xl p-2.5">
+            <div class="flex items-center justify-between text-[11px] text-[#7A5438] mb-0.5">
+              <span class="font-semibold flex items-center gap-1.5"><i class="fa-solid fa-cart-shopping text-black text-xs"></i> Posibles abandonos</span>
+              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#7A5438] px-1.5 py-0.5 rounded font-bold" id="an-abandon-rate">0%</span>
+            </div>
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-lg font-extrabold text-[#7A5438]" id="an-abandoned-count">0</span>
+              <span class="text-xs font-bold text-[#8A5A3B]" id="an-abandoned-value">($0)</span>
+            </div>
+            <div class="text-[10px] text-[#7A5438]">Señales de salida con carrito; no son abandonos confirmados</div>
+          </div>
+
+          <!-- KPI 4: Permanencia y Detección de Clics -->
+          <div class="bg-[#f3f3f3] border border-[#C9D9E6] rounded-xl p-2.5">
+            <div class="flex items-center justify-between text-[11px] text-[#2D4A60] mb-0.5">
+              <span class="font-semibold flex items-center gap-1.5"><i class="fa-regular fa-clock text-black text-xs"></i> Permanencia y Clics</span>
+              <span class="text-[10px] bg-[#FFFFFF]/80 text-[#2D4A60] px-1.5 py-0.5 rounded font-bold" id="an-avg-clicks">0 clics/vis.</span>
+            </div>
+            <div class="flex items-baseline justify-between">
+              <span class="text-base font-extrabold text-[#2D4A60]" id="an-dwell-time">0m 00s</span>
+              <span class="text-xs font-bold text-[#355670]" id="an-total-clicks">0 clics</span>
+            </div>
+            <div class="text-[10px] text-[#3E5669]">Tiempo estimado e interacciones registradas</div>
+          </div>
+        </div>
+
+        <!-- ORIGEN DEL TRÁFICO Y RENDIMIENTO POR ANUNCIO ESPECÍFICO -->
+        <div class="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-3">
+          <div class="flex flex-wrap items-center justify-between gap-1.5 mb-2">
+            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
+              <i class="fa-solid fa-bullhorn text-black"></i>
+              <span>Origen de Visitas y Rendimiento por Anuncio Específico</span>
+            </h3>
+            <button type="button" onclick="document.getElementById('utm-links-box').classList.toggle('hidden')" class="text-[10px] px-2 py-0.5 rounded-lg bg-[#E6EFF6] hover:bg-[#D6E5F0] text-[#2D4A60] border border-[#C5D8E8] font-bold flex items-center gap-1 transition">
+              <i class="fa-solid fa-link text-black text-xs"></i> Links por Anuncio
+            </button>
+          </div>
+
+          <!-- Caja desplegable con links listos para copiar y pegar en cada anuncio de Meta Ads -->
+          <div id="utm-links-box" class="hidden bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-2.5 mb-2.5 space-y-2 text-[11px]">
+            <p class="text-[#4A504C] leading-snug">
+              <b>Marcos:</b> Pegá estos links en tus anuncios de Instagram/Facebook para que el panel detecte automáticamente de qué video vino cada visita, clic, carrito o clic a WhatsApp:
+            </p>
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#e5e5e5] rounded-lg px-2 py-1">
+                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 1: Dolor Cervical (IG Ads)</span>
+                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Instagram_Ads&anuncio=Reel_1_Dolor_Cervical', this)" class="px-2 py-0.5 rounded bg-[#f2f2f2] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
+                  Copiar Link
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#e5e5e5] rounded-lg px-2 py-1">
+                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 2: Pack x2 Ahorro (FB Ads)</span>
+                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Facebook_Ads&anuncio=Reel_2_Pack_x2_Ahorro', this)" class="px-2 py-0.5 rounded bg-[#f2f2f2] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
+                  Copiar Link
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#e5e5e5] rounded-lg px-2 py-1">
+                <span class="truncate font-semibold text-[#2C302E] flex items-center gap-1"><i class="fa-solid fa-play text-black text-[10px]"></i> Reel 3: Densidad y Rebote (IG Ads)</span>
+                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen=Instagram_Ads&anuncio=Reel_3_Densidad_Rebote', this)" class="px-2 py-0.5 rounded bg-[#f2f2f2] hover:bg-[#CBE0CE] text-[#2F4B38] font-bold text-[10px] shrink-0">
+                  Copiar Link
+                </button>
+              </div>
+              <div class="flex items-center justify-between gap-2 bg-[#f3f3f3] border border-[#C9D9E6] rounded-lg px-2 py-1">
+                <span class="truncate font-semibold text-[#2D4A60] flex items-center gap-1"><i class="fa-solid fa-bolt text-black text-[10px]"></i> Fórmula Dinámica Meta Ads (Detecta cualquier anuncio solo)</span>
+                <button type="button" onclick="copyTrackingLink('https://tienda-marcos.pages.dev/?origen={{site_source_name}}&anuncio={{ad.name}}', this)" class="px-2 py-0.5 rounded bg-[#FFFFFF] hover:bg-[#f2f2f2] text-[#2D4A60] border border-[#BFD3C3] font-bold text-[10px] shrink-0">
+                  Copiar Fórmula
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[11px] border-collapse">
+              <thead>
+                <tr class="border-b border-[#e5e5e5] text-[#6B706C]">
+                  <th class="py-1.5 pr-2">Anuncio / Origen</th>
+                  <th class="py-1.5 px-1 text-center"><i class="fa-solid fa-eye text-black text-[10px] mr-1"></i>Visitas</th>
+                  <th class="py-1.5 px-1 text-center"><i class="fa-regular fa-clock text-black text-[10px] mr-1"></i>Perm.</th>
+                  <th class="py-1.5 px-1 text-center text-[#2F4B38]"><i class="fa-brands fa-whatsapp text-black text-[10px] mr-1"></i>Clics a WhatsApp</th>
+                  <th class="py-1.5 pl-1 text-center text-[#7A5438]"><i class="fa-solid fa-cart-arrow-down text-black text-[10px] mr-1"></i>Aband.</th>
+                </tr>
+              </thead>
+              <tbody id="an-ads-tbody" class="divide-y divide-[#EFECE4]">
+                <!-- Renderizado dinámico de anuncios -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TABLA DE PRODUCTOS MÁS VISTOS Y CARRITOS POR PRODUCTO -->
+        <div class="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-3">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
+              <i class="fa-solid fa-ranking-star text-black"></i>
+              <span>Productos Más Vistos, Clics WA y Abandonos</span>
+            </h3>
+            <span class="text-[10px] text-[#6B706C]" id="an-add-to-cart-total">0 agregados al carrito</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[11px] border-collapse">
+              <thead>
+                <tr class="border-b border-[#e5e5e5] text-[#6B706C]">
+                  <th class="py-1.5 pr-2">Producto</th>
+                  <th class="py-1.5 px-1.5 text-center"><i class="fa-solid fa-eye text-black text-[10px] mr-1"></i>Vistas</th>
+                  <th class="py-1.5 px-1.5 text-center"><i class="fa-solid fa-cart-plus text-black text-[10px] mr-1"></i>Carrito</th>
+                  <th class="py-1.5 px-1.5 text-center text-[#2F4B38]"><i class="fa-brands fa-whatsapp text-black text-[10px] mr-1"></i>Clics WA</th>
+                  <th class="py-1.5 pl-1.5 text-center text-[#7A5438]"><i class="fa-solid fa-triangle-exclamation text-black text-[10px] mr-1"></i>Aband.</th>
+                </tr>
+              </thead>
+              <tbody id="an-products-tbody" class="divide-y divide-[#EFECE4]">
+                <!-- Renderizado dinámico -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ACTIVIDAD RECIENTE DE VISITANTES (CLICS, PERMANENCIA, ORIGEN Y ESTADO EN TIEMPO REAL) -->
+        <div class="bg-[#fafafa] border border-[#e5e5e5] rounded-xl p-3">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xs font-bold text-[#2C302E] flex items-center gap-1.5">
+              <i class="fa-solid fa-user-clock text-[#4A7696]"></i>
+              <span>Últimas Visitas (Origen del Anuncio, Clics y Permanencia)</span>
+            </h3>
+            <div class="flex items-center gap-1">
+            </div>
+          </div>
+          <div id="an-sessions-list" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+            <!-- Renderizado dinámico -->
+          </div>
+        </div>
+      </div>
+
+
+    </section>
+  <section id="panel-status" role="tabpanel" aria-labelledby="panel-tab-status" hidden class="w-full h-full min-h-0 overflow-y-auto bg-[#fafafa] p-4 space-y-4">
+    <div class="max-w-4xl mx-auto bg-white border rounded-2xl p-6 space-y-4">
+      <div class="flex flex-wrap justify-between items-center gap-3"><h2 class="text-lg font-bold">Estado de tienda</h2><button id="status-scan" onclick="scanStoreNow()" class="bg-black text-white rounded-full px-4 py-2 text-sm">Comprobar ahora</button></div>
+      <p><a href="https://tienda-marcos.pages.dev/" target="_blank" rel="noopener" class="underline">tienda-marcos.pages.dev</a></p>
+      <p id="store-status-label" role="status" class="text-2xl font-semibold">Cargando estado…</p>
+      <p id="store-status-detail" class="text-sm text-[#6B706C]"></p>
+      <div class="grid sm:grid-cols-2 gap-4 text-sm"><p>Última comprobación<br><strong id="store-last-check">Sin comprobar</strong></p><p>Próxima comprobación<br><strong id="store-next-check">—</strong></p></div>
+      <p class="text-sm">Escaneo automático cada hora, de 08:00 a 22:00 inclusive. Horario de Córdoba, Argentina.</p>
+      <p id="store-schedule-note" class="text-xs text-[#6B706C]"></p>
+      <p class="text-xs text-[#6B706C]">Se revisan la respuesta de la web y el contenido del catálogo. Si falla, se repite una vez antes de informar una posible caída. No comprueba pagos ni envío de mensajes.</p>
+      <h3 class="font-semibold pt-3">Últimas comprobaciones</h3><ul id="store-check-history" class="space-y-2 text-sm"></ul>
+    </div>
+  </section>
+
   </div>
 
   <!-- MODAL DE CONFIGURACIÓN: TELEGRAM BOT + MOTOR IA -->
   <div id="config-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-[#FFFFFF] border border-[#DCD6CA] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl text-[#2C302E]">
-      <div class="flex items-center justify-between border-b border-[#EAE5DC] pb-3">
+    <div class="bg-[#FFFFFF] border border-[#e5e5e5] rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl text-[#2C302E]">
+      <div class="flex items-center justify-between border-b border-[#e8e8e8] pb-3">
         <h3 class="font-bold text-base text-[#2C302E] flex items-center gap-2">
-          <i class="fa-solid fa-plug text-[#6F9279]"></i>
-          <span>Conectar tu Telegram y Motor IA</span>
+          <i class="fa-solid fa-plug text-[#171717]"></i>
+          <span>Configurar inteligencia artificial</span>
         </h3>
         <button onclick="closeConfigModal()" class="text-[#6B706C] hover:text-[#2C302E]">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -536,35 +630,59 @@
           <label class="block font-bold text-[#355670] mb-1">
             1. Token de tu Bot de Telegram (De @BotFather):
           </label>
-          <input id="cfg-tg-token" type="password" placeholder="Ej: 7123456789:AAH..." class="w-full bg-[#F6F3EC] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#6F9279]" />
+          <input id="cfg-tg-token" type="password" placeholder="Ej: 7123456789:AAH..." class="w-full bg-[#fafafa] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#171717]" />
           <p class="text-[11px] text-[#6B706C] mt-1">
             Con esto podés mandarle audios, fotos y videos desde tu celular por Telegram y recibir los Reels y notas de voz.
           </p>
         </div>
 
-        <div class="pt-2 border-t border-[#EAE5DC]">
+        <div class="pt-2 border-t border-[#e8e8e8]">
           <label class="block font-bold text-[#3B5E46] mb-1">
-            2. API Key de IA Opcional (OpenAI / OpenRouter / Hermes):
+            Clave privada de OpenAI:
           </label>
-          <input id="cfg-ai-key" type="password" placeholder="sk-..." class="w-full bg-[#F6F3EC] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#6F9279]" />
+          <input id="cfg-ai-key" type="password" placeholder="sk-..." class="w-full bg-[#fafafa] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC] focus:outline-none focus:border-[#171717]" />
         </div>
 
         <div>
           <label class="block font-bold text-[#4A504C] mb-1">
             URL del Endpoint compatible con OpenAI / Hermes:
           </label>
-          <input id="cfg-ai-url" type="text" value="https://api.openai.com/v1/chat/completions" class="w-full bg-[#F6F3EC] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC]" />
+          <input id="cfg-ai-url" type="text" value="https://api.openai.com/v1/chat/completions" class="w-full bg-[#fafafa] text-[#2C302E] px-3 py-2 rounded-lg border border-[#CFC8BC]" />
         </div>
       </div>
 
       <div class="flex justify-end gap-2 pt-2">
         <button onclick="closeConfigModal()" class="px-4 py-2 rounded-lg bg-[#EFECE4] text-[#4A504C] text-xs font-bold">Cancelar</button>
-        <button onclick="saveConfig()" class="px-4 py-2 rounded-lg bg-[#6F9279] hover:bg-[#5B7B64] text-white text-xs font-bold">Guardar y Activar</button>
+        <button onclick="saveConfig()" class="px-4 py-2 rounded-lg bg-[#171717] hover:bg-[#333333] text-white text-xs font-bold">Guardar y Activar</button>
       </div>
     </div>
   </div>
 
   <script>
+    function showPanelTab(name) {
+      for (const tab of ['chat', 'tools', 'analytics', 'status']) {
+        const active = name === tab;
+        document.getElementById('panel-' + tab).hidden = !active;
+        const button = document.getElementById('panel-tab-' + tab);
+        button.setAttribute('aria-selected', String(active));
+        button.tabIndex = active ? 0 : -1;
+        button.classList.toggle('bg-black', active);
+        button.classList.toggle('text-white', active);
+        button.classList.toggle('bg-[#f4f4f4]', !active);
+        button.classList.toggle('text-black', !active);
+      }
+    }
+    document.querySelector('[role="tablist"]').addEventListener('keydown', event => {
+      if (!['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
+      event.preventDefault();
+      const tabs = ['chat', 'tools', 'analytics', 'status'];
+      const current = tabs.findIndex(tab => !document.getElementById('panel-' + tab).hidden);
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
+        : (current + (event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length;
+      const name = tabs[next];
+      showPanelTab(name);
+      document.getElementById('panel-tab-' + name).focus();
+    });
     let lastChatCount = -1;
     let selectedFiles = [];
     let currentProductsList = [];
@@ -574,12 +692,27 @@
     let mediaRecorder = null;
     let recordedChunks = [];
 
+    function formatChatTime(value) {
+      if (!value) return '';
+      const raw = String(value);
+      if (/^\d{2}:\d{2}$/.test(raw)) return raw;
+      const date = new Date(raw);
+      if (Number.isNaN(date.getTime())) return '';
+      return new Intl.DateTimeFormat('es-AR', {
+        timeZone: 'America/Argentina/Cordoba', day: '2-digit', month: '2-digit',
+        year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+      }).format(date);
+    }
+
     function formatMarkdown(text) {
-      return text
+      return String(text)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
         .replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#1F2421] font-bold">$1</strong>')
         .replace(/\*(.*?)\*/g, '<em class="text-[#466952] font-medium">$1</em>')
-        .replace(/`(.*?)`/g, '<code class="bg-[#EFECE4] text-[#3B5E46] border border-[#DCD6CA] px-1.5 py-0.5 rounded text-xs font-semibold">$1</code>')
-        .replace(/\n/g, '<br>');
+        .replace(/`(.*?)`/g, '<code class="bg-[#EFECE4] text-[#3B5E46] border border-[#e5e5e5] px-1.5 py-0.5 rounded text-xs font-semibold">$1</code>')
+        .replace(/\n/g, '<br>')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="underline text-blue-700">$1</a>');
     }
 
     function updateSelectedBar() {
@@ -750,7 +883,7 @@
         const data = await res.json();
 
         if (data.business?.name) {
-          document.getElementById('biz-name').textContent = data.business.name;
+          document.getElementById('biz-name').textContent = 'Panel';
         }
 
         // Estado de Telegram
@@ -760,7 +893,7 @@
         } else if (data.telegramConfigured) {
           tgText.textContent = 'Telegram: Verificando...';
         } else {
-          tgText.textContent = 'Conectar mi Telegram';
+          tgText.textContent = 'Configuración';
         }
 
         // Renderizar Galería de Archivos Reales de Marcos
@@ -769,25 +902,25 @@
         uploadsGrid.innerHTML = uploads.map(u => {
           const selIndex = selectedFiles.indexOf(u.name);
           const isSelected = selIndex >= 0;
-          const borderClass = isSelected ? 'border-2 border-[#6F9279] ring-2 ring-[#DCE8DE]' : 'border border-[#DCD6CA] opacity-90 hover:opacity-100';
-          const badgeHtml = isSelected 
-            ? `<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-[#6F9279] text-white font-extrabold text-[11px] flex items-center justify-center shadow">${selIndex + 1}</span>`
+          const borderClass = isSelected ? 'border-2 border-[#171717] ring-2 ring-[#f2f2f2]' : 'border border-[#e5e5e5] opacity-90 hover:opacity-100';
+          const badgeHtml = isSelected
+            ? `<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-[#171717] text-white font-extrabold text-[11px] flex items-center justify-center shadow">${selIndex + 1}</span>`
             : '';
           const delUploadBtn = `
-            <button type="button" onclick="deleteUploadFile(event, '${u.name}')" title="Eliminar este archivo" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#FFFFFF]/90 hover:bg-[#E8D5D2] text-[#8C534B] border border-[#DCD6CA] text-[10px] flex items-center justify-center shadow-sm transition">
+            <button type="button" onclick="deleteUploadFile(event, '${u.name}')" title="Eliminar este archivo" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#FFFFFF]/90 hover:bg-[#E8D5D2] text-[#8C534B] border border-[#e5e5e5] text-[10px] flex items-center justify-center shadow-sm transition">
               <i class="fa-solid fa-xmark"></i>
             </button>
           `;
           const typeBadge = u.type === 'video'
-            ? `<span class="absolute bottom-1 left-1 bg-[#2C302E]/80 text-[#DCE8DE] text-[9px] px-1.5 py-0.5 rounded font-bold"><i class="fa-solid fa-video mr-0.5"></i>CLIP</span>`
-            : `<span class="absolute bottom-1 left-1 bg-[#2C302E]/75 text-[#E8F0F6] text-[9px] px-1.5 py-0.5 rounded font-bold"><i class="fa-solid fa-camera mr-0.5"></i>FOTO</span>`;
+            ? `<span class="absolute bottom-1 left-1 bg-[#2C302E]/80 text-[#f2f2f2] text-[9px] px-1.5 py-0.5 rounded font-bold"><i class="fa-solid fa-video mr-0.5"></i>CLIP</span>`
+            : `<span class="absolute bottom-1 left-1 bg-[#2C302E]/75 text-[#f3f3f3] text-[9px] px-1.5 py-0.5 rounded font-bold"><i class="fa-solid fa-camera mr-0.5"></i>FOTO</span>`;
 
           const mediaPreview = u.type === 'video'
             ? `<video src="${u.url}" class="w-full h-16 object-cover rounded-lg pointer-events-none" muted></video>`
             : `<img src="${u.url}" class="w-full h-16 object-cover rounded-lg pointer-events-none" alt="${u.name}" />`;
 
           return `
-            <div onclick="toggleSelectFile('${u.name}')" class="relative cursor-pointer rounded-xl bg-[#F6F3EC] p-1 transition ${borderClass}" title="${u.name}">
+            <div onclick="toggleSelectFile('${u.name}')" class="relative cursor-pointer rounded-xl bg-[#fafafa] p-1 transition ${borderClass}" title="${u.name}">
               ${mediaPreview}
               ${delUploadBtn}
               ${badgeHtml}
@@ -804,7 +937,7 @@
           if (chatHistory.length === 0) {
             chatBox.innerHTML = `
               <div class="h-full flex flex-col items-center justify-center text-center py-8 px-4 max-w-lg mx-auto">
-                <div class="w-12 h-12 rounded-2xl bg-[#EAE7DF] text-black flex items-center justify-center text-xl shadow-xs mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-[#f2f2f2] text-black flex items-center justify-center text-xl shadow-xs mb-3">
                   <i class="fa-solid fa-sparkles text-black text-lg"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-[#2C302E]">Hola Marcos</h2>
@@ -813,7 +946,7 @@
                 </p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full text-left">
-                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz para alivio cervical con mis archivos reales')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#DDD7CD] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz para alivio cervical con mis archivos reales')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-film text-black text-sm"></i>
                       <span>Armar Reel Cervical</span>
@@ -821,7 +954,7 @@
                     <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 sin voz para dolor de cuello y postura</p>
                   </button>
 
-                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz de oferta Pack x2 Ahorro con mis archivos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#DDD7CD] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz de oferta Pack x2 Ahorro con mis archivos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-box text-black text-sm"></i>
                       <span>Armar Reel Pack x2</span>
@@ -829,7 +962,7 @@
                     <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 enfocado en ahorro familiar y envío gratis</p>
                   </button>
 
-                  <button type="button" onclick="sendQuickCommand('Mostrame la analítica de mi tienda WhatsApp: visualizaciones, clics en pedir, carritos abandonados y productos más vistos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#DDD7CD] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Mostrame la analítica de mi tienda WhatsApp: visualizaciones, clics en pedir, carritos abandonados y productos más vistos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-chart-line text-black text-sm"></i>
                       <span>Analítica de la Tienda</span>
@@ -837,7 +970,7 @@
                     <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Rendimiento por anuncio, visitas y carritos abandonados</p>
                   </button>
 
-                  <button type="button" onclick="sendQuickCommand('Calculame los costos, ganancia limpia, devoluciones y CPA máximo')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#DDD7CD] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Calculame los costos, ganancia limpia, devoluciones y CPA máximo')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-calculator text-black text-sm"></i>
                       <span>Costos y Ganancia Limpia</span>
@@ -850,17 +983,17 @@
           } else {
             chatBox.innerHTML = chatHistory.map(m => {
               const isUser = m.role === 'user';
-              const badge = m.source === 'telegram' 
-                ? '<span class="text-[9px] bg-[#FFFFFF] text-black border border-[#DDD7CD] px-1.5 py-0.2 rounded font-semibold ml-1"><i class="fa-brands fa-telegram text-black"></i> Telegram</span>' 
+              const badge = m.source === 'telegram'
+                ? '<span class="text-[9px] bg-[#FFFFFF] text-black border border-[#e0e0e0] px-1.5 py-0.2 rounded font-semibold ml-1"><i class="fa-brands fa-telegram text-black"></i> Telegram</span>'
                 : '';
 
               if (isUser) {
                 return `
                   <div class="flex justify-end">
-                    <div class="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-tr-xs px-4 py-3 bg-[#EAE7DF] text-[#1E2D22] border border-[#DDD7CD] shadow-xs text-xs sm:text-sm leading-relaxed">
+                    <div class="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-tr-xs px-4 py-3 bg-[#f2f2f2] text-[#1E2D22] border border-[#e0e0e0] shadow-xs text-xs sm:text-sm leading-relaxed">
                       <div class="flex items-center justify-between gap-2 mb-1 text-[10px] text-black">
                         <span class="font-bold">Marcos ${badge}</span>
-                        <span class="text-[9px] opacity-75">${m.timestamp || ''}</span>
+                        <span class="text-[9px] opacity-75">${formatChatTime(m.timestamp)}</span>
                       </div>
                       <div class="break-words">${formatMarkdown(m.text)}</div>
                     </div>
@@ -868,13 +1001,13 @@
                 `;
               } else {
                 const voiceHtml = m.voice ? `
-                  <div class="mt-2.5 p-2 rounded-xl bg-[#F6F3EC] border border-[#DDD7CD] flex items-center gap-2 max-w-sm">
+                  <div class="mt-2.5 p-2 rounded-xl bg-[#fafafa] border border-[#e0e0e0] flex items-center gap-2 max-w-sm">
                     <i class="fa-solid fa-volume-high text-black text-xs ml-1"></i>
                     <audio src="${m.voice}" controls class="h-7 w-full"></audio>
                   </div>
                 ` : '';
                 const reelHtml = m.reel ? `
-                  <div class="mt-3 p-3 rounded-xl bg-[#FAF8F5] border border-[#DDD7CD] inline-block shadow-xs">
+                  <div class="mt-3 p-3 rounded-xl bg-[#ffffff] border border-[#e0e0e0] inline-block shadow-xs">
                     <video src="${m.reel}" controls class="w-48 rounded-lg mx-auto border border-[#CFC8BC] shadow-xs"></video>
                     <div class="mt-2.5 flex justify-center">
                       <a href="${m.reel}" download class="bg-black hover:bg-neutral-800 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg inline-flex items-center gap-1.5 shadow-xs transition">
@@ -886,15 +1019,15 @@
 
                 return `
                   <div class="flex items-start gap-3 assistant-msg-container">
-                    <div class="w-7 h-7 rounded-full bg-[#EAE7DF] text-black flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 shadow-xs">
+                    <div class="w-7 h-7 rounded-full bg-[#f2f2f2] text-black flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 shadow-xs">
                       <i class="fa-solid fa-sparkles text-black text-[11px]"></i>
                     </div>
                     <div class="flex-1 min-w-0 max-w-[90%] sm:max-w-[85%]">
                       <div class="flex items-center gap-2 mb-1 text-[10px] text-[#7A7F7C]">
-                        <span class="font-bold text-[#2C302E]">Asistente</span>
-                        <span>${m.timestamp || ''}</span>
+                        <span class="font-bold text-[#2C302E]">Ariel</span>
+                        <span>${formatChatTime(m.timestamp)}</span>
                       </div>
-                      <div class="text-xs sm:text-sm text-[#2C302E] leading-relaxed break-words bg-[#FFFFFF] border border-[#EAE5DC] rounded-2xl rounded-tl-xs px-4 py-3 shadow-xs msg-body-content">
+                      <div class="text-xs sm:text-sm text-[#2C302E] leading-relaxed break-words bg-[#FFFFFF] border border-[#e8e8e8] rounded-2xl rounded-tl-xs px-4 py-3 shadow-xs msg-body-content">
                         ${formatMarkdown(m.text)}
                         ${voiceHtml}
                         ${reelHtml}
@@ -919,15 +1052,15 @@
         const reelsList = document.getElementById('reels-list');
         if (reels.length === 0) {
           reelsList.innerHTML = `
-            <div class="text-center py-4 text-xs text-[#6B706C] bg-[#F6F3EC] rounded-xl border border-[#E2DDD3]">
+            <div class="text-center py-4 text-xs text-[#6B706C] bg-[#fafafa] rounded-xl border border-[#e5e5e5]">
               No tenés Reels guardados en este momento. Seleccioná tus fotos o clips arriba y tocá <b>Armar mi Reel MP4</b>.
             </div>
           `;
         } else {
           reelsList.innerHTML = reels.map(r => `
-            <div data-reel-item="${r}" class="flex items-center justify-between bg-[#F6F3EC] p-2.5 rounded-xl border border-[#E2DDD3]">
+            <div data-reel-item="${r}" class="flex items-center justify-between bg-[#fafafa] p-2.5 rounded-xl border border-[#e5e5e5]">
               <div class="flex items-center gap-2.5 min-w-0">
-                <div class="w-8 h-8 rounded-lg bg-[#DCE8DE] text-[#3B5E46] flex items-center justify-center shrink-0">
+                <div class="w-8 h-8 rounded-lg bg-[#f2f2f2] text-[#3B5E46] flex items-center justify-center shrink-0">
                   <i class="fa-solid fa-video"></i>
                 </div>
                 <div class="min-w-0">
@@ -936,10 +1069,10 @@
                 </div>
               </div>
               <div class="flex items-center gap-1.5 shrink-0">
-                <a href="/reels/${r}" target="_blank" class="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#EAE5DC] text-[#3E4541] border border-[#CFC8BC] text-xs font-semibold">
+                <a href="/reels/${r}" target="_blank" class="px-2.5 py-1 rounded-lg bg-[#FFFFFF] hover:bg-[#e8e8e8] text-[#3E4541] border border-[#CFC8BC] text-xs font-semibold">
                   Ver
                 </a>
-                <a href="/reels/${r}" download class="px-2.5 py-1 rounded-lg bg-[#6F9279] hover:bg-[#5B7B64] text-white text-xs font-bold flex items-center gap-1">
+                <a href="/reels/${r}" download class="px-2.5 py-1 rounded-lg bg-[#171717] hover:bg-[#333333] text-white text-xs font-bold flex items-center gap-1">
                   <i class="fa-solid fa-download"></i> MP4
                 </a>
                 <button type="button" onclick="deleteReelFile('${r}', this)" title="Eliminar este Reel" class="px-2.5 py-1 rounded-lg bg-[#F5E6E4] hover:bg-[#EBD0CC] text-[#9E4B42] border border-[#E0C2BE] text-xs font-bold transition">
@@ -964,7 +1097,7 @@
 
         // Renderizar Sector de Analítica de la Tienda WhatsApp Business
         if (data.storeAnalytics) {
-          renderStoreAnalytics(data.storeAnalytics);
+          await refreshAnalytics();
         }
 
         // Renderizar Memoria Aprendida de Marcos
@@ -988,7 +1121,7 @@
         return;
       }
       listEl.innerHTML = rules.map(r => `
-        <div class="flex items-start justify-between gap-2 bg-[#F9F7F3] border border-[#E2DDD3] rounded-lg px-2.5 py-1.5 text-[11px]">
+        <div class="flex items-start justify-between gap-2 bg-[#fafafa] border border-[#e5e5e5] rounded-lg px-2.5 py-1.5 text-[11px]">
           <div class="min-w-0">
             <span class="font-semibold text-[#2F4B38]">•</span>
             <span class="text-[#2C302E] font-medium">${r.text}</span>
@@ -1031,17 +1164,162 @@
       }).catch(() => {});
     }
 
+    const storeStateLabels = {online:'Online', possible_down:'Posible caída', degraded:'Responde, pero requiere revisión', unverified:'No se pudo verificar'};
+    async function refreshStoreStatus() {
+      try {
+        const response = await fetch('/api/store-status', {cache:'no-store'});
+        if (!response.ok) throw new Error('Sin respuesta del monitor');
+        const data = await response.json(), latest = data.latest;
+        const label = document.getElementById('store-status-label');
+        label.textContent = data.running ? 'Comprobando…' : data.stale ? 'Estado desactualizado' : latest ? storeStateLabels[latest.state] : 'Todavía sin comprobar';
+        label.style.color = data.running || data.stale || !latest ? '#6B706C' : latest.state === 'online' ? '#28704b' : latest.state === 'possible_down' ? '#a73535' : '#8a601e';
+        const attempt = latest && latest.attempts[latest.attempts.length - 1];
+        document.getElementById('store-status-detail').textContent = latest ? 'Último resultado: ' + storeStateLabels[latest.state] + '. ' + (attempt.status ? 'HTTP ' + attempt.status + '. ' : '') + latest.attempts.length + ' intento(s). ' + (latest.state === 'online' ? 'La web respondió y se encontró contenido del catálogo.' : 'Una falla desde este servidor no demuestra una caída global.') : 'El monitor todavía no tiene un resultado guardado.';
+        document.getElementById('store-last-check').textContent = latest ? formatChatTime(latest.checkedAt) : 'Sin comprobar';
+        document.getElementById('store-next-check').textContent = formatChatTime(data.nextScheduledAt);
+        document.getElementById('store-schedule-note').textContent = (data.scheduledActive ? 'Horario automático activo. ' : 'Fuera del horario automático. ') + 'En local, esta computadora y el servidor deben permanecer encendidos. No usa crédito de IA para escanear.';
+        document.getElementById('status-scan').disabled = data.running;
+        const list = document.getElementById('store-check-history');
+        list.replaceChildren();
+        for (const check of data.history) {
+          const li = document.createElement('li');
+          li.textContent = formatChatTime(check.checkedAt) + ' · ' + storeStateLabels[check.state] + ' · ' + (check.trigger === 'scheduled' ? 'Automático' : 'Manual');
+          list.appendChild(li);
+        }
+      } catch (error) {
+        document.getElementById('store-status-label').textContent = 'No se pudo consultar el monitor';
+        document.getElementById('store-status-detail').textContent = 'Esto no confirma una caída de la tienda. ' + error.message;
+      }
+    }
+    async function scanStoreNow() {
+      const button = document.getElementById('status-scan');
+      button.disabled = true;
+      try {
+        const response = await fetch('/api/store-status/scan', {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+        if (!response.ok) throw new Error('No se pudo iniciar la comprobación');
+        await refreshStoreStatus();
+      } catch (error) {
+        document.getElementById('store-status-detail').textContent = error.message;
+        button.disabled = false;
+      }
+    }
+    let analyticsView = 'table';
+    let chartAnalyticsData = null;
+    let analyticsLoaded = false;
+    function setAnalyticsView(view) {
+      analyticsView = view;
+      document.getElementById('analytics-card').hidden = view !== 'table' || !analyticsLoaded;
+      document.getElementById('analytics-chart').hidden = view !== 'chart' || !analyticsLoaded;
+      for (const name of ['table','chart']) {
+        const button = document.getElementById('an-view-' + name);
+        button.setAttribute('aria-pressed', String(view === name));
+        button.classList.toggle('bg-black', view === name);
+        button.classList.toggle('text-white', view === name);
+      }
+    }
+    function renderAnalyticsChart() {
+      const container = document.getElementById('an-chart-canvas');
+      const empty = document.getElementById('an-chart-empty');
+      container.replaceChildren();
+      const rows = chartAnalyticsData?.dailySeries || [];
+      empty.hidden = rows.length > 0;
+      empty.textContent = rows.length ? '' : 'No hay eventos fechados para graficar con estos filtros.';
+      if (!rows.length) return;
+      const metricSelect = document.getElementById('an-chart-metric');
+      const metric = metricSelect.value;
+      const metricName = metricSelect.options[metricSelect.selectedIndex].text;
+      const width = Math.max(620, rows.length * 72 + 90), height = 320;
+      const left = 52, right = 22, top = 35, bottom = 68;
+      const plotHeight = height - top - bottom, plotWidth = width - left - right;
+      const maximum = Math.max(1, ...rows.map(row => Number(row[metric]) || 0));
+      const svgNS = 'http://www.w3.org/2000/svg';
+      function node(name, attributes, text) {
+        const element = document.createElementNS(svgNS, name);
+        for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, String(value));
+        if (text !== undefined) element.textContent = text;
+        return element;
+      }
+      const svg = node('svg', {width, height, role:'img', 'aria-label':metricName + ' por día. ' + rows.map(r => r.date + ': ' + (r[metric] || 0)).join('; ')});
+      svg.appendChild(node('title', {}, metricName + ' por día'));
+      for (let i=0; i<=4; i++) {
+        const y = top + plotHeight * i / 4;
+        svg.appendChild(node('line', {x1:left, x2:width-right, y1:y, y2:y, stroke:'#e8e8e8'}));
+        svg.appendChild(node('text', {x:left-10, y:y+4, 'text-anchor':'end', 'font-size':11, fill:'#666'}, Number((maximum * (4-i)/4).toFixed(1)).toLocaleString('es-AR')));
+      }
+      const slot = plotWidth / rows.length, barWidth = Math.min(44, slot * 0.65);
+      rows.forEach((row, index) => {
+        const value = Number(row[metric]) || 0, x = left + slot * index + (slot-barWidth)/2;
+        const barHeight = plotHeight * value / maximum;
+        const rect = node('rect', {x, y:top+plotHeight-barHeight, width:barWidth, height:barHeight, fill:'#242424'});
+        rect.appendChild(node('title', {}, row.date + ': ' + value + ' ' + metricName.toLowerCase()));
+        svg.appendChild(rect);
+        svg.appendChild(node('text', {x:x+barWidth/2, y:top+plotHeight-barHeight-8, 'text-anchor':'middle', 'font-size':12, fill:'#242424'}, value.toLocaleString('es-AR')));
+        const parts = row.date.split('-');
+        svg.appendChild(node('text', {x:x+barWidth/2, y:height-bottom+24, 'text-anchor':'middle', 'font-size':11, fill:'#666'}, parts[2]+'/'+parts[1]));
+        svg.appendChild(node('text', {x:x+barWidth/2, y:height-bottom+42, 'text-anchor':'middle', 'font-size':10, fill:'#888'}, parts[0]));
+      });
+      container.appendChild(svg);
+    }
+    let analyticsRequestVersion = 0;
+    function getAnalyticsFilters() {
+      return {start_date: document.getElementById('an-start').value, end_date: document.getElementById('an-end').value,
+        product_id: document.getElementById('an-product').value, campaign: document.getElementById('an-campaign').value};
+    }
+    function clearAnalyticsFilters() {
+      for (const id of ['an-start','an-end','an-product','an-campaign']) document.getElementById(id).value = '';
+      refreshAnalytics();
+    }
+    function updateFilterOptions(id, entries, emptyLabel) {
+      const select = document.getElementById(id), selected = select.value;
+      select.replaceChildren(new Option(emptyLabel, ''));
+      for (const entry of entries) select.add(new Option(entry.name, entry.id));
+      if (selected && !entries.some(e => e.id === selected)) select.add(new Option(selected, selected));
+      select.value = selected;
+    }
+    async function refreshAnalytics() {
+      const version = ++analyticsRequestVersion;
+      const status = document.getElementById('analytics-filter-status');
+      const card = document.getElementById('analytics-card');
+      try {
+        const response = await fetch('/api/analytics?' + new URLSearchParams(getAnalyticsFilters()), {cache: 'no-store'});
+        const data = await response.json();
+        if (version !== analyticsRequestVersion) return;
+        if (!response.ok) throw new Error(data.error || 'No se pudieron cargar los datos');
+        updateFilterOptions('an-product', data.options.products, 'Todos los productos');
+        updateFilterOptions('an-campaign', data.options.campaigns.map(c => ({id:c,name:c})), 'Todas las campañas');
+        analyticsLoaded = true;
+        chartAnalyticsData = data;
+        setAnalyticsView(analyticsView);
+        renderAnalyticsChart();
+        status.textContent = data.filteredEventCount + ' eventos en la selección. ' + (data.coverageStart ? 'Registros desde ' + formatChatTime(data.coverageStart) + '.' : 'Todavía no hay eventos fechados. No significa que la tienda no tenga visitas.') + ' Fechas en horario de Córdoba.';
+        renderStoreAnalytics(data);
+      } catch (error) {
+        if (version !== analyticsRequestVersion) return;
+        analyticsLoaded = false;
+        card.hidden = true;
+        document.getElementById('analytics-chart').hidden = true;
+        status.textContent = error.message;
+      }
+    }
+    for (const id of ['an-start','an-end','an-product','an-campaign']) document.getElementById(id).addEventListener('change', refreshAnalytics);
+    function escapeAnalytics(value) {
+      return String(value || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
     function renderStoreAnalytics(an) {
+      an = JSON.parse(JSON.stringify(an));
+      for (const ad of an.topAds || []) for (const key of ['adName','source']) ad[key] = escapeAnalytics(ad[key]);
+      for (const p of an.topProducts || []) p.name = escapeAnalytics(p.name);
+      for (const e of an.recentSessions || []) for (const key of ['adName','source','topProduct','time']) e[key] = escapeAnalytics(e[key]);
       document.getElementById('an-pageviews').textContent = (an.pageViews || 0).toLocaleString('es-AR');
-      document.getElementById('an-visitors').textContent = `${(an.uniqueVisitors || 0).toLocaleString('es-AR')} únicos`;
+      document.getElementById('an-visitors').textContent = `${(an.uniqueVisitors || 0).toLocaleString('es-AR')} sesiones identificadas`;
       document.getElementById('an-wa-clicks').textContent = (an.whatsappCheckoutClicks || 0).toLocaleString('es-AR');
-      document.getElementById('an-conv-rate').textContent = `${an.conversionRate ?? 0}% conv.`;
+      document.getElementById('an-conv-rate').textContent = an.conversionRate == null ? 'Sin tasa calculable' : `${an.conversionRate}% de sesiones con clic WA`;
       document.getElementById('an-abandoned-count').textContent = (an.abandonedCartsCount || 0).toLocaleString('es-AR');
       document.getElementById('an-abandoned-value').textContent = `($${(an.abandonedCartsValue || 0).toLocaleString('es-AR')})`;
-      document.getElementById('an-abandon-rate').textContent = `${an.abandonmentRate ?? 0}% aband.`;
+      document.getElementById('an-abandon-rate').textContent = 'Señal provisional';
       document.getElementById('an-dwell-time').textContent = an.avgDurationFormatted || '0m 00s';
-      document.getElementById('an-total-clicks').textContent = `${(an.totalClicks || 0).toLocaleString('es-AR')} clics`;
-      document.getElementById('an-avg-clicks').textContent = `${an.avgClicksPerVisitor ?? 0} clics/vis.`;
+      document.getElementById('an-total-clicks').textContent = `${(an.totalClicks || 0).toLocaleString('es-AR')} interacciones`;
+      document.getElementById('an-avg-clicks').textContent = 'Según eventos recibidos';
       document.getElementById('an-add-to-cart-total').textContent = `${(an.addToCartClicks || 0).toLocaleString('es-AR')} agregados al carrito`;
 
       // Renderizar Tabla de Origen y Anuncios Específicos
@@ -1049,26 +1327,26 @@
       const adsTbody = document.getElementById('an-ads-tbody');
       if (adsTbody) {
         adsTbody.innerHTML = topAds.map((ad, idx) => {
-          const isWinner = idx === 0 && (ad.whatsappOrders || 0) > 0;
+          const isWinner = false;
           return `
-            <tr class="hover:bg-[#F6F3EC]">
+            <tr class="hover:bg-[#fafafa]">
               <td class="py-1.5 pr-2">
                 <div class="font-semibold text-[#2C302E] flex items-center gap-1.5 truncate max-w-[165px]" title="${ad.adName}">
                   <i class="fa-solid ${isWinner ? 'fa-trophy text-black' : 'fa-bullhorn text-black'} text-[11px]"></i>
                   <span class="truncate">${ad.adName}</span>
                 </div>
-                <span class="inline-block text-[9px] bg-[#E8F0F6] text-[#355670] border border-[#C9D9E6] px-1.5 py-0.2 rounded font-semibold mt-0.5">
+                <span class="inline-block text-[9px] bg-[#f3f3f3] text-[#355670] border border-[#C9D9E6] px-1.5 py-0.2 rounded font-semibold mt-0.5">
                   ${ad.source}
                 </span>
               </td>
               <td class="py-1.5 px-1 text-center font-bold text-[#2C302E]">${ad.views || 0}</td>
               <td class="py-1.5 px-1 text-center text-[#355670] font-medium">${ad.avgDurationFormatted || '0s'}</td>
               <td class="py-1.5 px-1 text-center">
-                <span class="inline-block bg-[#DCE8DE] text-[#2F4B38] font-bold px-1.5 py-0.5 rounded">${ad.whatsappOrders || 0}</span>
-                <span class="block text-[9px] text-[#3B5E46] font-semibold">${ad.conversionRate ?? 0}%</span>
+                <span class="inline-block bg-[#f2f2f2] text-[#2F4B38] font-bold px-1.5 py-0.5 rounded">${ad.whatsappClicks || 0}</span>
+                <span class="block text-[9px] text-[#3B5E46] font-semibold">${ad.conversionRate == null ? 'Sin tasa' : ad.conversionRate + '%'}</span>
               </td>
               <td class="py-1.5 pl-1 text-center">
-                <span class="inline-block bg-[#F5EAE0] text-[#7A5438] font-bold px-1.5 py-0.5 rounded">${ad.abandoned || 0}</span>
+                <span class="inline-block bg-[#f5f5f5] text-[#7A5438] font-bold px-1.5 py-0.5 rounded">${ad.abandoned || 0}</span>
               </td>
             </tr>
           `;
@@ -1082,22 +1360,22 @@
         prodTbody.innerHTML = topProds.map((p, idx) => {
           const pct = Math.min(100, Math.round(((p.views || 0) / maxViews) * 100));
           return `
-            <tr class="hover:bg-[#F6F3EC]">
+            <tr class="hover:bg-[#fafafa]">
               <td class="py-1.5 pr-2">
                 <div class="font-semibold text-[#2C302E] truncate max-w-[165px]" title="${p.name}">
                   ${idx === 0 ? '<i class="fa-solid fa-star text-black text-[10px] mr-1"></i>' : ''}${p.name}
                 </div>
-                <div class="w-full bg-[#EAE5DC] h-1.5 rounded-full mt-1 overflow-hidden">
+                <div class="w-full bg-[#e8e8e8] h-1.5 rounded-full mt-1 overflow-hidden">
                   <div class="bg-black h-full rounded-full" style="width:${pct}%"></div>
                 </div>
               </td>
               <td class="py-1.5 px-1.5 text-center font-bold text-[#2C302E]">${p.views || 0}</td>
               <td class="py-1.5 px-1.5 text-center font-semibold text-[#355670]">${p.addedToCart || 0}</td>
               <td class="py-1.5 px-1.5 text-center">
-                <span class="inline-block bg-[#DCE8DE] text-[#2F4B38] font-bold px-1.5 py-0.5 rounded">${p.whatsappOrders || 0}</span>
+                <span class="inline-block bg-[#f2f2f2] text-[#2F4B38] font-bold px-1.5 py-0.5 rounded">${p.whatsappClicks || 0}</span>
               </td>
               <td class="py-1.5 pl-1.5 text-center">
-                <span class="inline-block bg-[#F5EAE0] text-[#7A5438] font-bold px-1.5 py-0.5 rounded">${p.abandoned || 0}</span>
+                <span class="inline-block bg-[#f5f5f5] text-[#7A5438] font-bold px-1.5 py-0.5 rounded">${p.abandoned || 0}</span>
               </td>
             </tr>
           `;
@@ -1116,18 +1394,18 @@
             const dRem = durSec % 60;
             const durTxt = `${dMin}m ${String(dRem).padStart(2, '0')}s`;
             const adBadge = s.adName
-              ? `<span class="inline-block bg-[#E8F0F6] text-[#2D4A60] border border-[#C9D9E6] text-[9px] font-bold px-1.5 py-0.2 rounded"><i class="fa-solid fa-bullhorn text-black mr-1"></i>${s.adName} (${s.source || 'Ads'})</span>`
+              ? `<span class="inline-block bg-[#f3f3f3] text-[#2D4A60] border border-[#C9D9E6] text-[9px] font-bold px-1.5 py-0.2 rounded"><i class="fa-solid fa-bullhorn text-black mr-1"></i>${s.adName} (${s.source || 'Ads'})</span>`
               : '';
             let badge = '';
-            if (s.status === 'whatsapp_order' || s.type === 'whatsapp_order') {
-              badge = `<span class="bg-[#DCE8DE] text-[#2F4B38] border border-[#BFD3C3] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-brands fa-whatsapp text-black"></i> Pidió WA ($${(s.cartValue || 0).toLocaleString('es-AR')})</span>`;
+            if (s.status === 'whatsapp_click' || s.type === 'whatsapp_click') {
+              badge = `<span class="bg-[#f2f2f2] text-[#2F4B38] border border-[#BFD3C3] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-brands fa-whatsapp text-black"></i> Clic WA · carrito ($${(s.cartValue || 0).toLocaleString('es-AR')})</span>`;
             } else if (s.status === 'abandoned_cart' || s.type === 'abandoned_cart') {
-              badge = `<span class="bg-[#F5EAE0] text-[#7A5438] border border-[#E4D1C0] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-solid fa-cart-arrow-down text-black"></i> Abandonó ($${(s.cartValue || 0).toLocaleString('es-AR')})</span>`;
+              badge = `<span class="bg-[#f5f5f5] text-[#7A5438] border border-[#E4D1C0] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-solid fa-cart-arrow-down text-black"></i> Abandonó ($${(s.cartValue || 0).toLocaleString('es-AR')})</span>`;
             } else {
-              badge = `<span class="bg-[#E8F0F6] text-[#355670] border border-[#C9D9E6] text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-solid fa-eye text-black"></i> Miró catálogo</span>`;
+              badge = `<span class="bg-[#f3f3f3] text-[#355670] border border-[#C9D9E6] text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1"><i class="fa-solid fa-eye text-black"></i> Miró catálogo</span>`;
             }
             return `
-              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#E2DDD3] rounded-lg px-2.5 py-1.5 text-[11px]">
+              <div class="flex items-center justify-between gap-2 bg-[#FFFFFF] border border-[#e5e5e5] rounded-lg px-2.5 py-1.5 text-[11px]">
                 <div class="min-w-0 space-y-0.5">
                   <div class="font-semibold text-[#2C302E] truncate">${s.topProduct || s.detail || 'Catálogo General'}</div>
                   <div class="flex flex-wrap items-center gap-1.5 text-[10px] text-[#6B706C]">
@@ -1216,17 +1494,17 @@
         const cpaIdeal = Math.max(0, Math.round(netMarginTransf * 0.30));
 
         return `
-          <tr class="hover:bg-[#F9F7F3]" data-row-idx="${idx}">
+          <tr class="hover:bg-[#fafafa]" data-row-idx="${idx}">
             <td class="py-2 pr-1.5 align-top">
-              <input type="text" value="${p.name.replace(/"/g, '&quot;')}" 
+              <input type="text" value="${p.name.replace(/"/g, '&quot;')}"
                 oninput="onProductFieldInput(${idx}, 'name', this.value)"
                 onchange="saveProductsTable()"
-                class="w-full min-w-[140px] bg-[#F6F3EC] text-[#2C302E] font-semibold text-xs px-2 py-1.5 rounded-lg border border-[#DCD6CA] focus:outline-none focus:border-[#6F9279]" />
+                class="w-full min-w-[140px] bg-[#fafafa] text-[#2C302E] font-semibold text-xs px-2 py-1.5 rounded-lg border border-[#e5e5e5] focus:outline-none focus:border-[#171717]" />
             </td>
             <td class="py-2 px-1.5 align-top">
-              <div class="flex items-center bg-[#F6F3EC] rounded-lg border border-[#DCD6CA] px-1.5 py-1 focus-within:border-[#6F9279]">
+              <div class="flex items-center bg-[#fafafa] rounded-lg border border-[#e5e5e5] px-1.5 py-1 focus-within:border-[#171717]">
                 <span class="text-[#6B706C] mr-0.5">$</span>
-                <input type="number" step="100" value="${price}" 
+                <input type="number" step="100" value="${price}"
                   oninput="onProductFieldInput(${idx}, 'price', this.value)"
                   onchange="saveProductsTable()"
                   class="w-20 bg-transparent text-[#2C302E] font-bold text-xs focus:outline-none" />
@@ -1236,9 +1514,9 @@
               </span>
             </td>
             <td class="py-2 px-1.5 align-top">
-              <div class="flex items-center bg-[#F6F3EC] rounded-lg border border-[#DCD6CA] px-1.5 py-1 focus-within:border-[#6F9279]">
+              <div class="flex items-center bg-[#fafafa] rounded-lg border border-[#e5e5e5] px-1.5 py-1 focus-within:border-[#171717]">
                 <span class="text-[#6B706C] mr-0.5">$</span>
-                <input type="number" step="100" value="${cost}" 
+                <input type="number" step="100" value="${cost}"
                   oninput="onProductFieldInput(${idx}, 'cost', this.value)"
                   onchange="saveProductsTable()"
                   class="w-20 bg-transparent text-[#3E4541] font-semibold text-xs focus:outline-none" />
@@ -1253,7 +1531,7 @@
               </span>
             </td>
             <td class="py-2 pl-1.5 align-top" id="row-cpa-${idx}">
-              <span class="inline-block bg-[#F5EAE0] text-[#7A5438] font-bold text-xs px-2 py-0.5 rounded-lg border border-[#E4D1C0]">
+              <span class="inline-block bg-[#f5f5f5] text-[#7A5438] font-bold text-xs px-2 py-0.5 rounded-lg border border-[#E4D1C0]">
                 $${cpaMax.toLocaleString('es-AR')}
               </span>
               <span class="block text-[10px] text-[#6B706C] font-normal mt-0.5">Ideal: $${cpaIdeal.toLocaleString('es-AR')}</span>
@@ -1305,7 +1583,7 @@
         if (elMargin) elMargin.textContent = `${netMarginTransf >= 0 ? '+' : ''}$${netMarginTransf.toLocaleString('es-AR')}`;
         if (elCpa) {
           elCpa.innerHTML = `
-            <span class="inline-block bg-[#F5EAE0] text-[#7A5438] font-bold text-xs px-2 py-0.5 rounded-lg border border-[#E4D1C0]">
+            <span class="inline-block bg-[#f5f5f5] text-[#7A5438] font-bold text-xs px-2 py-0.5 rounded-lg border border-[#E4D1C0]">
               $${cpaMax.toLocaleString('es-AR')}
             </span>
             <span class="block text-[10px] text-[#6B706C] font-normal mt-0.5">Ideal: $${cpaIdeal.toLocaleString('es-AR')}</span>
@@ -1374,11 +1652,11 @@
       const icon = document.getElementById('voice-toggle-icon');
       const txt = document.getElementById('voice-toggle-text');
       if (voiceReplyEnabled) {
-        btn.className = 'bg-[#DCE8DE] text-[#2F4B38] border border-[#BFD3C3] px-2.5 py-3 rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0';
+        btn.className = 'bg-[#f2f2f2] text-[#2F4B38] border border-[#BFD3C3] px-2.5 py-3 rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0';
         icon.className = 'fa-solid fa-volume-high';
         txt.textContent = 'Voz ON';
       } else {
-        btn.className = 'bg-[#EFECE4] text-[#6B706C] border border-[#DCD6CA] px-2.5 py-3 rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0';
+        btn.className = 'bg-[#EFECE4] text-[#6B706C] border border-[#e5e5e5] px-2.5 py-3 rounded-xl text-xs font-bold flex items-center gap-1 transition shrink-0';
         icon.className = 'fa-solid fa-volume-xmark';
         txt.textContent = 'Voz OFF';
       }
@@ -1410,6 +1688,7 @@
                 body: JSON.stringify({
                   audioBase64: b64,
                   ext: '.webm',
+                  analyticsFilters: getAnalyticsFilters(),
                   selectedFiles: selectedFiles.length > 0 ? selectedFiles : null
                 })
               });
@@ -1455,6 +1734,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: messageText,
+            analyticsFilters: getAnalyticsFilters(),
             selectedFiles: filesToUse,
             generateVoice: voiceReplyEnabled,
             isVoiceInput: isVoiceIn
@@ -1486,6 +1766,7 @@
     }
 
     function sendQuickCommand(cmdText) {
+      showPanelTab('chat');
       sendChatMessage(cmdText);
     }
 
@@ -1516,12 +1797,23 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      document.getElementById('cfg-ai-key').value = '';
       closeConfigModal();
       setTimeout(() => loadState(true), 1000);
     }
 
+    refreshStoreStatus();
+    setInterval(refreshStoreStatus, 4000);
     loadState(true);
     setInterval(() => loadState(false), 4000);
   </script>
+  <div id="pwa-offline" hidden role="status" style="position:fixed;bottom:0;left:0;right:0;background:#171717;color:white;padding:10px 16px;z-index:80;font-size:12px">Sin conexión a internet. Las consultas y acciones necesitan conexión al servidor.</div>
+  <dialog id="pwa-help" style="margin:auto;padding:28px;max-width:440px;width:calc(100% - 32px);border:1px solid #ddd;font-family:Poppins,sans-serif">
+    <h2 class="font-semibold text-lg">Instalar Ariel</h2>
+    <p class="text-sm mt-4">En Chrome o Edge, abrí el menú del navegador y buscá la opción para instalar esta aplicación.</p>
+    <p class="text-sm mt-3">En iPhone o iPad, abrí Ariel en Safari y elegí Compartir → Agregar a inicio.</p>
+    <p class="text-xs text-neutral-500 mt-3">Si este navegador integrado no ofrece instalación, abrí la dirección en Chrome, Edge o Safari. Para usarla desde otro dispositivo necesitamos publicarla con HTTPS.</p>
+    <form method="dialog" class="mt-5"><button class="bg-black text-white px-4 py-2 text-sm">Entendido</button></form>
+  </dialog>
 </body>
 </html>

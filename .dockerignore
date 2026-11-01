@@ -1,0 +1,17 @@
+.git
+.env
+.env.*
+!.env.example
+.secrets*
+.owner-auth*
+state.json*
+*.sqlite3*
+__pycache__/
+*.pyc
+uploads_reales/
+voices/
+reels/
+temp_build/
+images/
+backups/
+tests/

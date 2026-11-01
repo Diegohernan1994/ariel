@@ -1,0 +1,14 @@
+{
+  "business": {
+    "name": "Hola Marcos 👋 • Panel Comercial de Almohadas Viscoelásticas",
+    "ownerName": "Marcos",
+    "city": "Córdoba Capital",
+    "catalogUrl": "https://tienda-marcos.pages.dev"
+  },
+  "products": [],
+  "agentMemory": {
+    "learnedRules": [],
+    "campaignHistory": []
+  },
+  "chatHistory": []
+}
