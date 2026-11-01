@@ -682,6 +682,20 @@
     });
     let lastChatCount = -1;
     let selectedFiles = [];
+    let reelDraftFiles = (() => {
+      try { const value = JSON.parse(sessionStorage.getItem('ariel-reel-draft')); return Array.isArray(value) ? value.filter(v => typeof v === 'string') : null; }
+      catch (_) { return null; }
+    })();
+    function saveReelDraft() {
+      try { sessionStorage.setItem('ariel-reel-draft', JSON.stringify(reelDraftFiles)); } catch (_) {}
+    }
+    function finishReelDraft(completedFiles) {
+      selectedFiles = selectedFiles.filter(name => !completedFiles.includes(name));
+      reelDraftFiles = (reelDraftFiles || []).filter(name => !completedFiles.includes(name));
+      saveReelDraft();
+      updateSelectedBar();
+      document.getElementById('uploads-grid').innerHTML = '';
+    }
     let currentProductsList = [];
     let productsDirty = false;
     let voiceReplyEnabled = true;
@@ -771,6 +785,8 @@
           const data = await res.json();
           if (!res.ok || !data.ok || !Array.isArray(data.saved)) throw new Error(data.error || `No se pudo subir ${f.name}`);
           selectedFiles.push(...data.saved);
+          reelDraftFiles = [...(reelDraftFiles || []), ...data.saved];
+          saveReelDraft();
           uploadedCount++;
           updateSelectedBar();
         }
@@ -786,6 +802,7 @@
 
     async function buildReelFromSelected() {
       if (!selectedFiles.length) { alert('Seleccioná las fotos y los clips para tu reel.'); return; }
+      const completedFiles = [...new Set([...(reelDraftFiles || []), ...selectedFiles])];
       const btn = document.getElementById('btn-build-reel');
       const orig = btn.innerHTML;
       btn.disabled = true;
@@ -802,6 +819,7 @@
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || 'No se pudo armar el reel');
+        finishReelDraft(completedFiles);
         await loadState(false);
       } catch (error) {
         alert(error.message);
@@ -897,7 +915,7 @@
         }
 
         // Renderizar Galería de Archivos Reales de Marcos
-        const uploads = data.uploads || [];
+        const uploads = (data.uploads || []).filter(file => reelDraftFiles === null || reelDraftFiles.includes(file.name));
         const uploadsGrid = document.getElementById('uploads-grid');
         uploadsGrid.innerHTML = uploads.map(u => {
           const selIndex = selectedFiles.indexOf(u.name);
@@ -1682,6 +1700,7 @@
             micIcon.className = 'fa-solid fa-spinner fa-spin';
             micLabel.textContent = 'Escuchando...';
             try {
+              const completedDraft = [...new Set([...(reelDraftFiles || []), ...selectedFiles])];
               const res = await fetch('/api/voice-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1727,7 +1746,8 @@
       const btn = document.getElementById('btn-send');
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-sm"></i>';
-      const filesToUse = customSelectedFiles || (selectedFiles.length > 0 ? selectedFiles : null);
+      const filesToUse = customSelectedFiles || (selectedFiles.length > 0 ? [...selectedFiles] : null);
+      const completedDraft = [...new Set([...(reelDraftFiles || []), ...(filesToUse || [])])];
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',

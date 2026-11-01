@@ -6,6 +6,6 @@ const values=[...select.matchAll(/value="([^"]+)"/g)].map(x=>x[1]);
 assert.equal(values.length,11);assert.equal(new Set(values).size,11);assert(values.includes('none'));
 const block=html.slice(html.indexOf('    async function buildReelFromSelected()'),html.indexOf('    async function clearChatHistory()'));
 const button={innerHTML:'Armar mi reel',disabled:false};let sent;
-const ctx={selectedFiles:['a.jpg','b.mp4'],document:{getElementById:id=>id==='reel-transition'?{value:'dissolve'}:button},alert:msg=>{throw Error(msg)},loadState:async()=>{},fetch:async(url,opts)=>{sent=JSON.parse(opts.body);return {ok:true,json:async()=>({ok:true})}}};
+const ctx={reelDraftFiles:[],finishReelDraft:()=>{},selectedFiles:['a.jpg','b.mp4'],document:{getElementById:id=>id==='reel-transition'?{value:'dissolve'}:button},alert:msg=>{throw Error(msg)},loadState:async()=>{},fetch:async(url,opts)=>{sent=JSON.parse(opts.body);return {ok:true,json:async()=>({ok:true})}}};
 vm.createContext(ctx);vm.runInContext(block,ctx);
 (async()=>{await ctx.buildReelFromSelected();assert.equal(sent.transition,'dissolve');assert.deepEqual(Array.from(sent.selectedFiles),['a.jpg','b.mp4']);assert.equal(button.disabled,false);console.log('OK: diez efectos y corte directo; transición y orden enviados al servidor.');})().catch(e=>{console.error(e);process.exitCode=1});

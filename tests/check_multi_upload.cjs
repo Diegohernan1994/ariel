@@ -3,7 +3,7 @@ const html=fs.readFileSync(require('node:path').join(__dirname,'../public/index.
 assert.match(html,/<input[^>]+id="file-upload"[^>]+multiple/);
 const body=html.slice(html.indexOf('    async function handleFilesUpload'),html.indexOf('    async function buildReelFromSelected'));
 const selected=['existing.jpg'], calls=[], button={innerHTML:'Subir',disabled:false};
-const ctx={selectedFiles:selected,document:{getElementById:()=>button},fileToBase64:async f=>'data:'+f.name,updateSelectedBar:()=>{},loadState:async()=>{},alert:m=>{throw Error(m)},fetch:async(url,opts)=>{
+const ctx={reelDraftFiles:[],saveReelDraft:()=>{},selectedFiles:selected,document:{getElementById:()=>button},fileToBase64:async f=>'data:'+f.name,updateSelectedBar:()=>{},loadState:async()=>{},alert:m=>{throw Error(m)},fetch:async(url,opts)=>{
  const files=JSON.parse(opts.body).files; assert.equal(files.length,1); calls.push(files[0].name);
  return {ok:true,json:async()=>({ok:true,saved:[files[0].name]})};
 }};
