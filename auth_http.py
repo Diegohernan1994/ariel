@@ -36,6 +36,10 @@ class AuthHTTPMixin:
 
     def _auth_get(self, path):
         auth = self.server.access
+        if path == '/api/auth/login-challenge':
+            token = secrets.token_urlsafe(32)
+            self._auth_json({'csrfToken': token}, cookie=auth.cookie('ariel_login_csrf', token, 600))
+            return False
         if path == '/health/live':
             self._auth_json({'ok': True})
             return False

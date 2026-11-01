@@ -15,8 +15,11 @@ if (setup) {
 form.addEventListener('submit', async event => {
   event.preventDefault(); errorBox.textContent = ''; submit.disabled = true;
   try {
-    const response = await fetch('/api/auth/' + (setup ? 'setup' : 'login'), {method:'POST',
-      headers:{'Content-Type':'application/json','X-CSRF-Token':document.body.dataset.csrf},
+    const challengeResponse = await fetch('/api/auth/login-challenge', {cache:'no-store', credentials:'same-origin'});
+    if (!challengeResponse.ok) throw new Error('No se pudo preparar el acceso. Volvé a intentar.');
+    const challenge = await challengeResponse.json();
+    const response = await fetch('/api/auth/' + (setup ? 'setup' : 'login'), {method:'POST', credentials:'same-origin',
+      headers:{'Content-Type':'application/json','X-CSRF-Token':challenge.csrfToken},
       body:JSON.stringify({username:form.elements.username.value,password:form.elements.password.value,confirmPassword:form.elements.confirmPassword.value})});
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'No se pudo completar el acceso');

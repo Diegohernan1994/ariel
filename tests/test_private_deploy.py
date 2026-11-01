@@ -75,6 +75,19 @@ class PrivateDeployment(unittest.TestCase):
         self.assertIsNone(restarted.session(authenticated))
         self.assertEqual(self.request('GET','/api/state',headers=authenticated)[0],401)
 
+    def test_025_fresh_challenge_replaces_stale_page(self):
+        _, headers, raw = self.request('GET','/api/auth/login-challenge')
+        cookie = headers['Set-Cookie'].split(';')[0]
+        fresh = json.loads(raw)['csrfToken']
+        self.assertIn('no-store',headers['Cache-Control'])
+        data = {'username':'dueño','password':'temporary-fixture-789'}
+        self.assertEqual(self.request('POST','/api/auth/login',data,{'Cookie':cookie,'X-CSRF-Token':'stale-token'})[0],403)
+        status, headers, raw = self.request('GET','/api/auth/login-challenge')
+        self.assertEqual(status,200)
+        renewed = json.loads(raw)['csrfToken']
+        self.assertNotEqual(fresh,renewed)
+        self.assertEqual(self.request('POST','/api/auth/login',data,{'Cookie':headers['Set-Cookie'].split(';')[0],'X-CSRF-Token':renewed})[0],200)
+
     def test_03_untrusted_tracking_and_invalid_bodies(self):
         self.assertEqual(self.request('POST','/api/track',{}, {'Origin':'https://hostil.example'})[0],403)
         status, headers, raw = self.request('POST','/api/track',{'event':'page_view','eventId':'private-deploy-fixture','sessionId':'fixture'}, {'Origin':'https://tienda-marcos.pages.dev'})
