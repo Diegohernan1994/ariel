@@ -35,7 +35,7 @@ TOOLS = [
          {"product_id": {"type": "string"}, "field": {"type": "string", "enum": ["price", "cost"]},
           "amount": {"type": "integer", "minimum": 0, "maximum": 100000000}}),
     tool("build_reel", "Genera montaje MP4 con material real seleccionado, solo ante pedido explícito de crear video.",
-         {"angle": {"type": "string", "enum": ["cervical", "pack", "rebote"]}}),
+         {}),
 ]
 
 
@@ -111,10 +111,7 @@ def run_tool(name, args, api, selected_files):
                 "before": before, "after": verified[field], "publishedToStore": False,
                 "warning": "Solo se actualizó el panel. La tienda pública todavía requiere sincronización."}
     if name == "build_reel":
-        angle = args.get("angle")
-        if angle not in ("cervical", "pack", "rebote"):
-            raise ValueError("Ángulo inválido")
-        filename = api["generate_visual_reel"](angle=angle, selected_files=selected_files)
+        filename = api["generate_visual_reel"](selected_files=selected_files)
         return {"created": True, "reel": filename, "published": False}
     raise ValueError("Herramienta desconocida")
 

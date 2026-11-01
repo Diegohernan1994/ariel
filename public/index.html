@@ -88,7 +88,7 @@
       <!-- Botón rápido para que Marcos suba clips o fotos -->
       <button onclick="document.getElementById('file-upload').click()" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-black hover:bg-neutral-800 text-white flex items-center gap-1.5 transition shadow-sm">
         <i class="fa-solid fa-cloud-arrow-up text-white"></i>
-        <span>Subir mis Clips / Fotos</span>
+        <span>Subir fotos o clips</span>
       </button>
 
       <!-- Estado de Telegram -->
@@ -249,7 +249,7 @@
             <span>1. Marcos: Tus Clips Cortos y Fotos Reales</span>
           </h2>
           <button onclick="document.getElementById('file-upload').click()" id="btn-upload-panel" class="px-3 py-1 rounded-lg bg-[#f2f2f2] hover:bg-[#CBE0CE] text-[#2F4B38] border border-[#BFD3C3] text-xs font-bold flex items-center gap-1.5 transition">
-            <i class="fa-solid fa-plus"></i> Subir desde Celu/PC
+            <i class="fa-solid fa-plus"></i> Subir fotos o clips
           </button>
         </div>
 
@@ -259,7 +259,7 @@
         </div>
 
         <p class="text-[11px] text-[#6B706C] mb-2">
-          Tocá las fotos o clips en el orden en que querés que salgan en tu Reel:
+          Seleccioná varias fotos o videos. Tocá los archivos en el orden del reel. Cada foto dura 3 segundos; los videos conservan su duración. Formato vertical 9:16, sin audio. Máximo 20 MB por archivo. En PC podés seleccionar varios con Ctrl o Mayús.
         </p>
 
         <!-- Galería de clips y fotos reales subidas -->
@@ -757,23 +757,22 @@
       btnPanel.disabled = true;
 
       try {
-        const payloadFiles = [];
+        let uploadedCount = 0;
         for (const f of fileList) {
+          btnPanel.textContent = `Subiendo ${uploadedCount + 1} de ${fileList.length}...`;
+          if (f.size > 20 * 1024 * 1024) throw new Error(`${f.name}: el máximo es 20 MB por archivo.`);
           const b64 = await fileToBase64(f);
-          payloadFiles.push({ name: f.name, dataBase64: b64 });
-        }
-
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ files: payloadFiles })
-        });
-        const data = await res.json();
-        if (data.ok && data.saved) {
-          selectedFiles = [...data.saved];
+          const res = await fetch('/api/upload', {
+            method: 'POST', headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({files:[{name:f.name,dataBase64:b64}]})
+          });
+          const data = await res.json();
+          if (!res.ok || !data.ok || !Array.isArray(data.saved)) throw new Error(data.error || `No se pudo subir ${f.name}`);
+          selectedFiles.push(...data.saved);
+          uploadedCount++;
           updateSelectedBar();
-          await loadState(true);
         }
+        await loadState(true);
       } catch (err) {
         alert('Error al subir archivos: ' + err.message);
       } finally {
@@ -784,20 +783,25 @@
     }
 
     async function buildReelFromSelected() {
+      if (!selectedFiles.length) { alert('Seleccioná las fotos y los clips para tu reel.'); return; }
       const btn = document.getElementById('btn-build-reel');
       const orig = btn.innerHTML;
       btn.disabled = true;
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Armando MP4...';
 
       try {
-        await fetch('/api/build-reel', {
+        const response = await fetch('/api/build-reel', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             selectedFiles: selectedFiles.length > 0 ? selectedFiles : null
           })
         });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || 'No se pudo armar el reel');
         await loadState(false);
+      } catch (error) {
+        alert(error.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = orig;

@@ -263,92 +263,19 @@ def render_segment_from_real_media(media_path, badge, headline, subline, cta_tex
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def list_uploaded_media():
-    valid_exts = (".mp4", ".mov", ".webm", ".jpg", ".jpeg", ".png", ".webp")
+    valid_exts = (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v", ".jpg", ".jpeg", ".png", ".webp")
     items = []
     if os.path.exists(UPLOADS_DIR):
         for fname in sorted(os.listdir(UPLOADS_DIR), key=lambda x: os.path.getmtime(os.path.join(UPLOADS_DIR, x)), reverse=True):
             if fname.lower().endswith(valid_exts):
                 ext = os.path.splitext(fname)[1].lower()
-                mtype = "video" if ext in (".mp4", ".mov", ".webm") else "image"
+                mtype = "video" if ext in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v") else "image"
                 items.append({"name": fname, "type": mtype, "url": f"/uploads/{fname}"})
     return items
 
-def generate_visual_reel(angle="cervical", custom_title=None, selected_files=None):
-    state = load_state()
-    biz = state.get("business", {})
-    products = state.get("products", [])
-    p_pack_cerv = next((p for p in products if p["id"] == "pack-2-cervicales"), products[0])
-    p_cerv = next((p for p in products if p["id"] == "cervical-individual"), products[0])
-
-    disc = biz.get("transferDiscountPercent", 15)
-    pack_transf = round(p_pack_cerv["price"] * (1 - disc / 100.0))
-    cerv_transf = round(p_cerv["price"] * (1 - disc / 100.0))
-
-    # Obtener los archivos reales subidos por el usuario (clips de video o fotos reales)
-    uploaded = list_uploaded_media()
-    if selected_files and len(selected_files) > 0:
-        media_paths = [os.path.join(UPLOADS_DIR, f) for f in selected_files if os.path.exists(os.path.join(UPLOADS_DIR, f))]
-    else:
-        # Usar los últimos 3 archivos subidos (priorizando clips de video/fotos reales recién subidas)
-        media_paths = [os.path.join(UPLOADS_DIR, item["name"]) for item in uploaded[:3]]
-
-    if not media_paths:
-        raise RuntimeError("No hay fotos ni clips cargados en la galería de archivos reales.")
-
-    # Si subió 1 o 2 archivos, repetirlos para cubrir las 3 escenas del Reel
-    while len(media_paths) < 3:
-        media_paths.append(media_paths[-1])
-
-    ts = datetime.now().strftime("%H%M%S")
-    angle_key = angle.lower()
-
-    if "pack" in angle_key or "oferta" in angle_key or "2" in angle_key:
-        reel_name = f"REEL_REAL_PACK2_{ts}.mp4"
-        scenes_text = [
-            ("PROMO PACK X2", custom_title or "PACK X2 VISCOELÁSTICAS", f"PRECIO LISTA: ${p_pack_cerv['price']:,}\nCON TRANSFERENCIA: ${pack_transf:,}".replace(",", "."), f"{disc}% OFF EXTRA TRANSFERENCIA"),
-            ("CALIDAD REAL", "ESPUMA CON MEMORIA REAL", "2 ALMOHADAS DE 60x40 CM\nCON FUNDA CON CIERRE LAVABLE", "NO SE DEFORMA CON EL USO"),
-            ("ENVÍOS EN CÓRDOBA", "RECIBILO HOY EN TU CASA", f"DENTRO DE CIRCUNVALACIÓN ${biz.get('shippingInsideRing', 3000):,}\nENVÍO GRATIS +$100.000".replace(",", "."), "PEDÍ DIRECTO POR WHATSAPP")
-        ]
-    elif "rebote" in angle_key or "memoria" in angle_key or "demo" in angle_key:
-        reel_name = f"REEL_REAL_REBOTE_{ts}.mp4"
-        scenes_text = [
-            ("PRODUCTO 100% REAL", custom_title or "MIRÁ LA DENSIDAD REAL", "ESPUMA VISCOELÁSTICA TERMOSENSIBLE\nRECUPERA SU FORMA AL INSTANTE", "SIN RELLENOS QUE SE APLASTAN"),
-            ("DETALLES DE CALIDAD", "FUNDA SUAVE CON CIERRE", f"DESDE ${cerv_transf:,} ABONANDO\nCON {disc}% OFF TRANSFERENCIA".replace(",", "."), "DESMONTABLE Y LAVABLE"),
-            ("CÓRDOBA CAPITAL", "ENTREGA RÁPIDA EN EL DÍA", "VERIFICÁS LA CALIDAD AL RECIBIR\nATENCIÓN DIRECTA EN WHATSAPP", "TOCÁ EL LINK DEL CATÁLOGO")
-        ]
-    else:
-        reel_name = f"REEL_REAL_CERVICAL_{ts}.mp4"
-        scenes_text = [
-            ("ALIVIO CERVICAL", custom_title or "¿DOLOR DE CUELLO AL DORMIR?", "DISEÑO ANATÓMICO DE DOBLE ALTURA\nALINEA CUELLO Y COLUMNA", "ESPUMA CON MEMORIA REAL"),
-            ("PRECIO DIRECTO", "INDIVIDUAL O PACK X2 AHORRO", f"INDIVIDUAL: ${cerv_transf:,} C/ TRANSF.\nPACK X2: ${pack_transf:,} C/ TRANSF.".replace(",", "."), f"{disc}% OFF POR TRANSFERENCIA"),
-            ("CÓRDOBA CAPITAL", "ENVÍOS RÁPIDOS A DOMICILIO", "DENTRO DE CIRCUNVALACIÓN $3.000\nFUERA DE CIRCUNVALACIÓN $5.000", "PEDÍ LA TUYA POR WHATSAPP")
-        ]
-
-    max_clips = min(len(media_paths), 8)
-    seg_dur = 4 if max_clips > 3 else 5
-    seg_files = []
-    for idx in range(max_clips):
-        mpath = media_paths[idx]
-        b_txt, h_txt, s_txt, c_txt = scenes_text[idx % len(scenes_text)]
-        seg_mp4 = os.path.join(TEMP_DIR, f"seg_{ts}_{idx}.mp4")
-        render_segment_from_real_media(mpath, b_txt, h_txt, s_txt, c_txt, seg_mp4, duration=seg_dur)
-        seg_files.append(seg_mp4)
-
-    concat_txt = os.path.join(TEMP_DIR, f"concat_segs_{ts}.txt")
-    with open(concat_txt, "w", encoding="utf-8") as f:
-        for sf in seg_files:
-            f.write(f"file '{sf}'\n")
-
-    out_mp4 = os.path.join(REELS_DIR, reel_name)
-    cmd = [
-        "ffmpeg", "-y",
-        "-f", "concat", "-safe", "0", "-i", concat_txt,
-        "-an",
-        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "30",
-        out_mp4
-    ]
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return reel_name
+def generate_visual_reel(angle="general", custom_title=None, selected_files=None):
+    from reel_media import build_reel
+    return build_reel(UPLOADS_DIR, REELS_DIR, TEMP_DIR, selected_files)
 
 # ==============================================================================
 # MOTOR DE VOZ DEL AGENTE: ESCUCHAR AUDIOS (STT) Y RESPONDER CON VOZ (TTS)
@@ -753,7 +680,7 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             fpath = os.path.join(UPLOADS_DIR, fname)
             if os.path.exists(fpath):
                 ext = os.path.splitext(fname)[1].lower()
-                ctype = "video/mp4" if ext in (".mp4", ".mov", ".webm") else "image/jpeg"
+                ctype = "video/mp4" if ext in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v") else "image/jpeg"
                 with open(fpath, "rb") as f:
                     data = f.read()
                 self.send_response(200)
@@ -869,7 +796,7 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
                 if "," in b64:
                     b64 = b64.split(",", 1)[1]
                 raw_bytes = base64.b64decode(b64)
-                final_name = f"real_{datetime.now().strftime('%H%M%S')}_{raw_name}"
+                final_name = f"real_{__import__('uuid').uuid4().hex}_{raw_name}"
                 dest_path = os.path.join(UPLOADS_DIR, final_name)
                 with open(dest_path, "wb") as out_f:
                     out_f.write(raw_bytes)
