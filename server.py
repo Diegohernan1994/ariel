@@ -356,7 +356,11 @@ def generate_visual_reel(angle="cervical", custom_title=None, selected_files=Non
 # ==============================================================================
 def clean_text_for_speech(text):
     """Limpia markdown, emojis y símbolos para que la nota de voz en español argentino suene 100% natural."""
-    s = re.sub(r"`[^`]+`", "", text)
+    s = re.sub(r"\[([^\]]+)\]\(https?://[^)]+\)", r"\1", text)
+    s = re.sub(r"https?://\S+", "", s)
+    s = re.sub(r"(?m)^\s*(?:\d+[.)]|[-*•#]+)\s+", "", s)
+    s = s.replace("…", ".").replace("...", ".").replace("—", ", ").replace("–", ", ")
+    s = re.sub(r"`[^`]+`", "", s)
     s = s.replace("**", "").replace("*", "").replace(">", "")
     s = s.replace("tienda-marcos.pages.dev", "tu tienda online")
     s = re.sub(r"\$(\d{1,3}(?:\.\d{3})+|\d+)", r"\1 pesos", s)
@@ -383,7 +387,7 @@ def generate_agent_voice_note(reply_text):
     ogg_path = os.path.join(VOICES_DIR, ogg_name)
 
     async def _tts():
-        comm = edge_tts.Communicate(spoken, "es-AR-TomasNeural", rate="+12%")
+        comm = edge_tts.Communicate(spoken, "es-AR-TomasNeural", rate="+6%")
         await comm.save(mp3_path)
 
     asyncio.run(_tts())
