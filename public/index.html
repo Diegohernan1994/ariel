@@ -667,6 +667,7 @@
         button.classList.toggle('bg-[#f4f4f4]', !active);
         button.classList.toggle('text-black', !active);
       }
+      window.dispatchEvent(new CustomEvent('ariel:section'));
     }
     document.querySelector('[role="tablist"]').addEventListener('keydown', event => {
       if (!['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
@@ -1814,5 +1815,22 @@
     <p class="text-xs text-neutral-500 mt-3">Si este navegador integrado no ofrece instalación, abrí la dirección en Chrome, Edge o Safari. Para usarla desde otro dispositivo necesitamos publicarla con HTTPS.</p>
     <form method="dialog" class="mt-5"><button class="bg-black text-white px-4 py-2 text-sm">Entendido</button></form>
   </dialog>
+
+  <style>
+  #support-widget{position:fixed;right:20px;bottom:20px;z-index:500;font-family:Poppins,system-ui,sans-serif;color:#171717}#support-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#171717;color:white;border:1px solid #171717;cursor:pointer;font:inherit;font-size:13px}#support-toggle svg{width:36px;height:36px;animation:support-bob 3s ease-in-out infinite}#support-box{position:absolute;right:0;bottom:68px;width:min(360px,calc(100vw - 32px));max-height:75dvh;overflow:auto;background:white;border:1px solid #d5d5d5;box-shadow:0 8px 30px #0002;padding:16px;font-size:12px}#support-box header{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}#support-box button,#support-box textarea{font:inherit;border:1px solid #ddd;padding:8px;background:white;color:#171717}#support-box button{cursor:pointer}#support-box button:disabled{opacity:.5;cursor:wait}#support-feed{max-height:260px;overflow:auto;white-space:pre-wrap}.support-message{padding:10px;line-height:1.6;margin:8px 0;border:1px solid #eee}.support-message.user{background:#f3f3f3}#support-input{width:100%;resize:vertical;min-height:70px}#support-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}#support-status{padding:10px;background:#fff5e4;border:1px solid #e5d5b5;line-height:1.6;margin:8px 0;max-width:360px;white-space:pre-wrap}#support-box #support-send{background:#171717;color:white}.support-caption{color:#666;font-size:11px;line-height:1.5;margin:6px 0}@keyframes support-bob{50%{transform:translateY(-3px)}}@media(prefers-reduced-motion:reduce){#support-toggle svg{animation:none}}
+  </style>
+  <div id="support-toast" hidden role="status" style="position:fixed;right:20px;top:20px;z-index:600;max-width:min(360px,calc(100vw - 40px));background:#fff5e4;border:1px solid #e5d5b5;padding:14px;font-size:12px;line-height:1.6"><p id="support-toast-text"></p><button id="support-toast-close" type="button" style="border:1px solid #ddd;background:white;padding:6px;margin-top:8px">Ocultar aviso</button></div>
+  <div id="support-widget" hidden>
+    <div id="support-status" role="status" aria-live="polite" hidden></div>
+    <section id="support-box" role="dialog" aria-label="Ayuda de Ariel" hidden>
+      <header><div><strong>Ariel te ayuda</strong><div id="support-context" class="support-caption"></div></div><button id="support-close" type="button" aria-label="Cerrar ayuda">✕</button></header>
+      <div id="support-feed" role="log" aria-live="polite"></div>
+      <form id="support-form"><label for="support-input">¿En qué te ayudo?</label><textarea id="support-input" maxlength="2000" placeholder="Contame tu duda o describí el problema"></textarea><div id="support-actions"><button id="support-send" type="submit">Preguntar</button><button id="support-report" type="button">Registrar problema</button><button id="support-reports" type="button">Ver reportes</button></div></form>
+      <p class="support-caption">Ayuda con IA. Puede equivocarse. No incluyas contraseñas ni claves. Los reportes quedan guardados en esta app; no se envían por correo.</p>
+    </section>
+    <button id="support-toggle" type="button" aria-expanded="false" aria-controls="support-box" aria-label="Abrir ayuda de Ariel"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3v5M15 3h10" stroke="currentColor" stroke-width="2"/><rect x="5" y="9" width="30" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="16" width="5" height="5" fill="currentColor"/><rect x="24" y="16" width="5" height="5" fill="currentColor"/><path d="M13 27h14M1 16v12M39 16v12" stroke="currentColor" stroke-width="2"/></svg><span>¿Necesitás ayuda?</span></button>
+  </div>
+  <script src="/support-widget.js" defer></script>
+
 </body>
 </html>

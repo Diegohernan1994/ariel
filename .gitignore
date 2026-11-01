@@ -20,3 +20,5 @@ sessions.sqlite3*
 backups/
 state.json*
 !/.env.example
+
+support.sqlite3*

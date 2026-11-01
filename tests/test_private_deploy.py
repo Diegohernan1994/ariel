@@ -88,6 +88,33 @@ class PrivateDeployment(unittest.TestCase):
         self.assertNotEqual(fresh,renewed)
         self.assertEqual(self.request('POST','/api/auth/login',data,{'Cookie':headers['Set-Cookie'].split(';')[0],'X-CSRF-Token':renewed})[0],200)
 
+    def test_027_support_requires_session_and_records_failures(self):
+        from unittest.mock import patch
+        for path in ['/api/support/reports']:
+            self.assertEqual(self.request('GET',path)[0],401)
+        self.assertEqual(self.request('POST','/api/support/report',{'description':'prueba'})[0],401)
+        _, headers, _ = self.request('GET','/login')
+        cookie = headers['Set-Cookie'].split(';')[0]
+        status, headers, _ = self.request('POST','/api/auth/login',{'username':'dueño','password':'temporary-fixture-789'}, {'Cookie':cookie,'X-CSRF-Token':cookie.split('=',1)[1]})
+        self.assertEqual(status,200)
+        hdr = {'Cookie':headers['Set-Cookie'].split(';')[0]}
+        _, _, raw = self.request('GET','/api/auth/session',headers=hdr)
+        hdr['X-CSRF-Token']=json.loads(raw)['csrfToken']
+        status, _, raw = self.request('POST','/api/support/report',{'section':'tools','description':'No termina el reel. apiKey: fixture-secret'},hdr)
+        self.assertEqual(status,200);self.assertFalse(json.loads(raw)['sent'])
+        status, _, raw = self.request('GET','/api/support/reports',headers=hdr)
+        self.assertEqual(status,200);self.assertNotIn(b'fixture-secret',raw)
+        self.assertEqual(self.request('GET','/support-widget.js',headers=hdr)[0],200)
+        with patch.object(server,'answer_help',side_effect=RuntimeError('fixture failure')):
+            status, _, raw = self.request('POST','/api/support/chat',{'message':'Ayuda','section':'tools'},hdr)
+        self.assertEqual(status,500)
+        self.assertEqual(json.loads(raw)['incident']['status'],'saved_locally')
+        self.assertNotIn(b'fixture failure',raw)
+        with patch.object(server,'execute_agent_instruction',return_value={'reply':'Falló la consulta','systemError':'AI_REQUEST_FAILED'}):
+            status, _, raw = self.request('POST','/api/chat',{'message':'prueba'},hdr)
+        self.assertEqual(status,200);self.assertIn('incident',json.loads(raw))
+
+
     def test_03_untrusted_tracking_and_invalid_bodies(self):
         self.assertEqual(self.request('POST','/api/track',{}, {'Origin':'https://hostil.example'})[0],403)
         status, headers, raw = self.request('POST','/api/track',{'event':'page_view','eventId':'private-deploy-fixture','sessionId':'fixture'}, {'Origin':'https://tienda-marcos.pages.dev'})

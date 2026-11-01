@@ -11,7 +11,7 @@ import zipfile
 from contextlib import closing
 from access_control import AccessControl
 
-FILES = {'state.json', 'analytics.sqlite3', 'store-monitor.sqlite3', '.owner-auth.json'}
+FILES = {'state.json', 'analytics.sqlite3', 'store-monitor.sqlite3', 'support.sqlite3', '.owner-auth.json'}
 DIRECTORIES = {'uploads_reales', 'reels', 'voices', 'images'}
 
 

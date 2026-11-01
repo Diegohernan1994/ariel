@@ -23,12 +23,14 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 from access_control import AccessControl
 from auth_http import AuthHTTPMixin
+from support_service import SupportService, answer_help
 from analytics_store import query as query_analytics, record as record_analytics
 DATA_DIR = os.path.realpath(os.environ.get("DATA_DIR", BASE_DIR))
 os.makedirs(DATA_DIR, exist_ok=True)
 ANALYTICS_DB = os.path.join(DATA_DIR, "analytics.sqlite3")
 STATE_FILE = os.path.join(DATA_DIR, "state.json")
 SECRET_FILE = os.path.join(DATA_DIR, ".secrets.local.json")
+support_service = SupportService(DATA_DIR)
 PUBLIC_DIR = os.path.join(BASE_DIR, "public")
 REELS_DIR = os.path.join(DATA_DIR, "reels")
 IMAGES_DIR = os.path.join(DATA_DIR, "images")
@@ -543,6 +545,13 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
         pass
 
     def _send_json(self, data, status=200):
+        route = urllib.parse.urlparse(self.path).path
+        if isinstance(data, dict) and route.startswith('/api/') and route != '/api/track' and (status >= 500 or data.get('systemError')):
+            try:
+                incident = support_service.record(code=data.get('systemError') or 'HTTP_' + str(status), route=route)
+                data = {**data, 'incident': incident}
+            except Exception:
+                data = {**data, 'reportSaved': False}
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -572,6 +581,14 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
         self._auth_json({"error": "Método no permitido"}, 405)
 
     def do_GET(self):
+        try:
+            self._handle_get()
+        except (BrokenPipeError, ConnectionResetError):
+            return
+        except Exception:
+            self._send_json({'error': 'Ocurrió un problema del sistema. No pude completar la solicitud.'}, 500)
+
+    def _handle_get(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         if not self._auth_get(path):
@@ -581,6 +598,7 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             "/manifest.webmanifest": "application/manifest+json",
             "/sw.js": "application/javascript",
             "/pwa.js": "application/javascript",
+            "/support-widget.js": "application/javascript",
             "/offline.html": "text/html; charset=utf-8",
             "/icons/ariel-192.png": "image/png",
             "/icons/ariel-512.png": "image/png",
@@ -601,6 +619,10 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
                 self.send_header("Service-Worker-Allowed", "/")
             self.end_headers()
             self.wfile.write(body)
+            return
+
+        if path == "/api/support/reports":
+            self._send_json({"reports": support_service.recent()})
             return
 
         if path == "/api/store-status":
@@ -706,6 +728,14 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
         self.send_error(404, "Not Found")
 
     def do_POST(self):
+        try:
+            self._dispatch_post()
+        except (BrokenPipeError, ConnectionResetError):
+            return
+        except Exception:
+            self._send_json({'error': 'Ocurrió un problema del sistema. No pude completar la solicitud.'}, 500)
+
+    def _dispatch_post(self):
         path = urllib.parse.urlparse(self.path).path
         if path in ("/api/chat", "/api/voice-order", "/api/products", "/api/config", "/api/memory/add", "/api/memory/delete", "/api/clear-chat", "/api/delete-reel"):
             with state_operation_lock:
@@ -727,6 +757,23 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             self._auth_json({"error": "JSON inválido"}, 400)
             return
         if self._handle_auth_post(path, payload):
+            return
+
+        if path == "/api/support/report":
+            description = payload.get('description', '')
+            if not isinstance(description, str) or len(description) > 2000:
+                self._send_json({'error': 'Describí el problema en hasta 2000 caracteres.'}, 400)
+                return
+            self._send_json(support_service.record(payload.get('section', 'chat'), payload.get('code', 'USER_REPORT'), payload.get('route', ''), description))
+            return
+
+        if path == "/api/support/chat":
+            try:
+                self._send_json({'reply': answer_help(payload, load_state())})
+            except ValueError as error:
+                self._send_json({'error': str(error)}, 400)
+            except Exception:
+                self._send_json({'error': 'La ayuda no pudo responder por un problema del sistema. Podés volver a intentar.'}, 500)
             return
 
         if path == "/api/store-status/scan":
