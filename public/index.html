@@ -255,7 +255,7 @@
 
         <div class="bg-[#F5EFE6] border border-[#E4D9C8] rounded-xl p-2.5 mb-3 text-[11px] text-[#5C4B3B] leading-relaxed">
           <i class="fa-solid fa-shield-halved text-[#8C6D53] mr-1"></i>
-          <b>100% Tus Almohadas Reales:</b> Marcos, acá podés subir videos cortos apretando la almohada o varias fotos sacadas con tu celular. El sistema <b>nunca inventa nada ni cambia la tela o textura</b>: usa tus archivos originales y les arma el marco de venta sin voz.
+          <b>Tus productos reales:</b> Marcos, acá podés subir videos cortos de tus productos o varias fotos sacadas con tu celular. El sistema <b>nunca inventa nada ni cambia la tela o textura</b>: usa tus archivos originales y les arma el marco de venta sin voz.
         </div>
 
         <p class="text-[11px] text-[#6B706C] mb-2">
@@ -267,16 +267,11 @@
           <!-- Renderizado dinámico -->
         </div>
 
-        <!-- Selector de ángulo + botón directo de ensamblaje -->
+        <!-- Botón directo de ensamblaje -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-[#e8e8e8]">
-          <select id="reel-angle-select" class="bg-[#fafafa] text-[#2C302E] text-xs rounded-xl px-3 py-2 border border-[#e5e5e5] flex-1 focus:outline-none focus:border-[#171717]">
-            <option value="cervical">Opción 1: Alivio Dolor Cervical y Postura</option>
-            <option value="pack">Opción 2: Oferta Pack x2 Ahorro (-15% Transf.)</option>
-            <option value="rebote">Opción 3: Demostración Densidad y Rebote Real</option>
-          </select>
           <button onclick="buildReelFromSelected()" id="btn-build-reel" class="bg-[#171717] hover:bg-[#333333] text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition shrink-0 shadow-sm">
             <i class="fa-solid fa-film"></i>
-            <span>Armar mi Reel MP4</span>
+            <span>Armar mi reel</span>
           </button>
         </div>
       </div>
@@ -389,7 +384,7 @@
           </button>
         </div>
         <p class="text-xs text-[#3E5669] leading-relaxed">
-          Cuando estés repartiendo por Córdoba y no tengas la PC a mano, <b>mandale un audio de voz o las fotos/videos de las almohadas a tu Telegram</b> (ej: <i>"Armame un reel del Pack x2 con las fotos que te pasé"</i> o <i>"¿Cuántos carritos abandonados tengo hoy?"</i>). Te va a responder con una <b>Nota de Voz</b> y el video MP4 listo.
+          Cuando estés repartiendo por Córdoba y no tengas la PC a mano, <b>mandale un audio de voz o las fotos/videos de tus productos a tu Telegram</b> (ej: <i>"Armame un reel del Pack x2 con las fotos que te pasé"</i> o <i>"¿Cuántos carritos abandonados tengo hoy?"</i>). Te va a responder con una <b>Nota de Voz</b> y el video MP4 listo.
         </p>
       </div>
 
@@ -789,7 +784,6 @@
     }
 
     async function buildReelFromSelected() {
-      const angle = document.getElementById('reel-angle-select').value;
       const btn = document.getElementById('btn-build-reel');
       const orig = btn.innerHTML;
       btn.disabled = true;
@@ -800,7 +794,6 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            angle,
             selectedFiles: selectedFiles.length > 0 ? selectedFiles : null
           })
         });
@@ -942,24 +935,24 @@
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-[#2C302E]">Hola Marcos</h2>
                 <p class="text-xs sm:text-sm text-[#6B706C] mt-1 mb-6 max-w-md">
-                  ¿En qué te ayudo hoy con tu tienda o tus campañas de almohadas?
+                  ¿En qué te ayudo hoy con tu tienda o tus campañas?
                 </p>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full text-left">
-                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz para alivio cervical con mis archivos reales')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz para presentar mis productos usando mis archivos reales')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-film text-black text-sm"></i>
-                      <span>Armar Reel Cervical</span>
+                      <span>Armar mi reel</span>
                     </div>
-                    <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 sin voz para dolor de cuello y postura</p>
+                    <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 con tus fotos y clips reales</p>
                   </button>
 
-                  <button type="button" onclick="sendQuickCommand('Armame un Reel sin voz de oferta Pack x2 Ahorro con mis archivos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
+                  <button type="button" onclick="sendQuickCommand('Ayudame a crear un Reel de una oferta de mi tienda con mis archivos, sin inventar descuentos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
                     <div class="flex items-center gap-2 text-xs font-bold text-[#2C302E] group-hover:text-black">
                       <i class="fa-solid fa-box text-black text-sm"></i>
-                      <span>Armar Reel Pack x2</span>
+                      <span>Reel de una oferta</span>
                     </div>
-                    <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 enfocado en ahorro familiar y envío gratis</p>
+                    <p class="text-[11px] text-[#7A7F7C] mt-1 leading-normal">Video 9:16 para una oferta de tu tienda</p>
                   </button>
 
                   <button type="button" onclick="sendQuickCommand('Mostrame la analítica de mi tienda WhatsApp: visualizaciones, clics en pedir, carritos abandonados y productos más vistos')" class="p-3.5 rounded-xl bg-[#FFFFFF] hover:bg-[#F2EFE9] border border-[#e0e0e0] hover:border-black transition shadow-xs group">
@@ -1053,7 +1046,7 @@
         if (reels.length === 0) {
           reelsList.innerHTML = `
             <div class="text-center py-4 text-xs text-[#6B706C] bg-[#fafafa] rounded-xl border border-[#e5e5e5]">
-              No tenés Reels guardados en este momento. Seleccioná tus fotos o clips arriba y tocá <b>Armar mi Reel MP4</b>.
+              No tenés Reels guardados en este momento. Seleccioná tus fotos o clips arriba y tocá <b>Armar mi reel</b>.
             </div>
           `;
         } else {

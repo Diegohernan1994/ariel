@@ -383,7 +383,7 @@ def generate_agent_voice_note(reply_text):
     ogg_path = os.path.join(VOICES_DIR, ogg_name)
 
     async def _tts():
-        comm = edge_tts.Communicate(spoken, "es-AR-TomasNeural", rate="+0%")
+        comm = edge_tts.Communicate(spoken, "es-AR-TomasNeural", rate="+12%")
         await comm.save(mp3_path)
 
     asyncio.run(_tts())
