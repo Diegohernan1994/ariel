@@ -259,7 +259,7 @@
         </div>
 
         <p class="text-[11px] text-[#6B706C] mb-2">
-          Seleccioná varias fotos o videos. Tocá los archivos en el orden del reel. Cada foto dura 3 segundos; los videos conservan su duración. Formato vertical 9:16, sin audio. Máximo 20 MB por archivo. En PC podés seleccionar varios con Ctrl o Mayús.
+          Seleccioná varias fotos o videos. Tocá los archivos en el orden del reel. Cada foto dura 3 segundos; los videos conservan su duración. Formato vertical 9:16 a pantalla completa, con recorte centrado y zoom más rápido en las fotos, sin audio. Las transiciones solapan hasta 0,3 segundos entre clips y reducen la duración total. Máximo 20 MB por archivo. En PC podés seleccionar varios con Ctrl o Mayús.
         </p>
 
         <!-- Galería de clips y fotos reales subidas -->
@@ -269,6 +269,7 @@
 
         <!-- Botón directo de ensamblaje -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-2 border-t border-[#e8e8e8]">
+          <label for="reel-transition" class="text-xs flex flex-col gap-1 flex-1">Transición<select id="reel-transition" class="border border-[#e5e5e5] bg-white px-3 py-2"><option value="none">Sin transición (corte directo)</option><option value="fade">Fundido suave</option><option value="dissolve">Disolución</option><option value="fadeblack">Fundido a negro</option><option value="wipeleft">Barrido a la izquierda</option><option value="wiperight">Barrido a la derecha</option><option value="slideleft">Deslizamiento a la izquierda</option><option value="slideright">Deslizamiento a la derecha</option><option value="smoothleft">Deslizamiento suave</option><option value="circleopen">Apertura circular</option><option value="pixelize">Pixelado</option></select></label>
           <button onclick="buildReelFromSelected()" id="btn-build-reel" class="bg-[#171717] hover:bg-[#333333] text-white font-bold text-xs px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition shrink-0 shadow-sm">
             <i class="fa-solid fa-film"></i>
             <span>Armar mi reel</span>
@@ -794,7 +795,8 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            selectedFiles: selectedFiles.length > 0 ? selectedFiles : null
+            selectedFiles: selectedFiles.length > 0 ? selectedFiles : null,
+            transition: document.getElementById('reel-transition').value
           })
         });
         const result = await response.json();

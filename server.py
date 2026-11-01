@@ -273,9 +273,9 @@ def list_uploaded_media():
                 items.append({"name": fname, "type": mtype, "url": f"/uploads/{fname}"})
     return items
 
-def generate_visual_reel(angle="general", custom_title=None, selected_files=None):
+def generate_visual_reel(angle="general", custom_title=None, selected_files=None, transition="none"):
     from reel_media import build_reel
-    return build_reel(UPLOADS_DIR, REELS_DIR, TEMP_DIR, selected_files)
+    return build_reel(UPLOADS_DIR, REELS_DIR, TEMP_DIR, selected_files, transition=transition)
 
 # ==============================================================================
 # MOTOR DE VOZ DEL AGENTE: ESCUCHAR AUDIOS (STT) Y RESPONDER CON VOZ (TTS)
@@ -868,8 +868,10 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             angle = payload.get("angle", "cervical")
             selected_files = payload.get("selectedFiles", None)
             try:
-                generated_reel = generate_visual_reel(angle=angle, selected_files=selected_files)
+                generated_reel = generate_visual_reel(angle=angle, selected_files=selected_files, transition=payload.get("transition", "none"))
                 self._send_json({"ok": True, "reel": generated_reel})
+            except ValueError as e:
+                self._send_json({"error": str(e)}, 400)
             except Exception as e:
                 self._send_json({"error": str(e)}, 500)
             return
