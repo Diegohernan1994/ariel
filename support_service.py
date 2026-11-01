@@ -8,7 +8,7 @@ import uuid
 from contextlib import closing
 from datetime import datetime, timezone, timedelta
 
-SECTIONS = {'tools':'Herramientas', 'analytics':'Analíticas', 'status':'Estado de tienda', 'chat':'Chat'}
+SECTIONS = {'tools':'Herramientas', 'gallery':'Galería', 'analytics':'Analíticas', 'status':'Estado de tienda', 'chat':'Chat'}
 GUIDE = '''Ariel es un panel comercial. Secciones:
 Herramientas: subir varias fotos o videos con Ctrl/Mayús en PC; máximo 20 MB por archivo.
 Los archivos quedan seleccionados en el orden de subida. Tocar una miniatura desmarca o agrega al final.
@@ -16,6 +16,7 @@ Cada foto genera 5 segundos de zoom y conserva los 3 centrales. Videos conservan
 Salida MP4 1080x1920, 9:16, recorte centrado, 30 fps, sin audio. Diez transiciones y corte directo.
 Las transiciones solapan hasta 0,3 s por unión. Armar mi reel inicia el montaje con la selección actual.
 El montaje usa FFmpeg en el servidor, no una API de video. No modifica ni anima objetos mediante IA.
+Galería: hasta 100 archivos activos, favoritos protegidos y papelera recuperable 7 días. Los más antiguos no favoritos ni en uso pasan a papelera al alcanzar el límite. El espacio total incluye papelera, por defecto 2048 MB. Si se llena, se bloquea la subida sin borrar antes de plazo. Se puede seleccionar material y usarlo en un nuevo reel. Quitar del armado no borra el original.
 Analíticas: filtros de fechas, producto y campaña. Tablas o gráfico. Clic a WhatsApp no es venta.
 Sin eventos significa que no hay registros, no demuestra que no hubo visitas.
 Estado de tienda: revisión HTTP/HTML cada hora de 08 a 22 inclusive, hora Córdoba. Revisión manual disponible.

@@ -88,3 +88,13 @@ Abrir WhatsApp se sigue registrando como clic, no como venta confirmada.
 7. Configurar respaldos externos. Telegram queda para la etapa posterior acordada.
 
 El despliegue tampoco agrega integraciones que todavía no existen: las ventas requieren confirmación real, los resultados de anuncios necesitan datos y los cambios del catálogo del panel aún no se sincronizan automáticamente con la tienda pública.
+
+## Galería de fotos y clips
+
+La pestaña Galería conserva hasta 100 archivos activos y usa el mismo volumen persistente `/data`. Los archivos existentes se incorporan automáticamente. La base `media-library.sqlite3` conserva favoritos y fechas de papelera; está incluida en la herramienta de respaldo.
+
+El espacio para originales y papelera es de 2048 MB por defecto. Se puede configurar `MEDIA_STORAGE_LIMIT_MB=2048` en EasyPanel. Los reels terminados, temporales de montaje y respaldos ocupan espacio adicional y no forman parte de ese límite.
+
+Al subir un archivo y superar los 100 activos, el más antiguo que no sea favorito ni esté en uso pasa a papelera. Si todos están protegidos, la subida se rechaza sin borrarlos. La papelera conserva los originales durante siete días y luego se eliminan en la siguiente revisión horaria o acceso a la galería. Si se llena el espacio, se detienen las subidas sin acortar el período de recuperación. Restaurar un archivo cuando ya hay 100 activos puede enviar a papelera el más antiguo disponible.
+
+La X del área de armado solo quita el archivo del borrador. Para enviarlo a papelera, usar la acción de la Galería. El área de armado se vacía al completar correctamente un reel y los originales permanecen reutilizables. La galería y la limpieza no consumen API de OpenAI.

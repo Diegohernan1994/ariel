@@ -107,6 +107,7 @@
     <div class="sidebar-brand">Panel</div>
     <button id="panel-tab-chat" role="tab" aria-selected="true" aria-controls="panel-chat" onclick="showPanelTab('chat')" class="px-4 py-2 rounded-full text-sm font-semibold bg-black text-white"><i class="fa-solid fa-comment" aria-hidden="true"></i><span>Chat</span></button>
     <button id="panel-tab-tools" role="tab" aria-selected="false" aria-controls="panel-tools" tabindex="-1" onclick="showPanelTab('tools')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>Herramientas</span></button>
+    <button id="panel-tab-gallery" role="tab" aria-selected="false" aria-controls="panel-gallery" tabindex="-1" onclick="showPanelTab('gallery')" class="px-4 py-2 text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-images" aria-hidden="true"></i><span>Galería</span></button>
     <button id="panel-tab-analytics" role="tab" aria-selected="false" aria-controls="panel-analytics" tabindex="-1" onclick="showPanelTab('analytics')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span>Analíticas</span></button>
     <button id="panel-tab-status" role="tab" aria-selected="false" aria-controls="panel-status" tabindex="-1" onclick="showPanelTab('status')" class="px-4 py-2 rounded-full text-sm font-semibold bg-[#f4f4f4] text-black"><i class="fa-solid fa-signal" aria-hidden="true"></i><span>Estado de tienda</span></button>
     <div style="margin-top:auto;padding:20px 12px 0;border-top:1px solid #e8e8e8">
@@ -262,7 +263,8 @@
           Seleccioná varias fotos o videos. Tocá los archivos en el orden del reel. Cada foto dura 3 segundos; los videos conservan su duración. Formato vertical 9:16 a pantalla completa, con recorte centrado y zoom más rápido en las fotos, sin audio. Las transiciones solapan hasta 0,3 segundos entre clips y reducen la duración total. Máximo 20 MB por archivo. En PC podés seleccionar varios con Ctrl o Mayús.
         </p>
 
-        <!-- Galería de clips y fotos reales subidas -->
+        <button type="button" onclick="showPanelTab('gallery')" class="border border-[#ddd] bg-white p-2 text-xs">Elegir desde mi galería</button>
+        <!-- Archivos del reel actual -->
         <div id="uploads-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-44 overflow-y-auto pr-1 mb-3">
           <!-- Renderizado dinámico -->
         </div>
@@ -390,6 +392,17 @@
       </div>
 
     </aside>
+    <section id="panel-gallery" role="tabpanel" aria-labelledby="panel-tab-gallery" hidden class="w-full min-h-0 h-full overflow-y-auto bg-[#fafafa] p-4 space-y-4">
+      <h2 class="text-lg font-semibold">Galería</h2>
+      <p class="text-xs text-[#666]">Hasta 100 archivos activos. Los más antiguos que no sean favoritos ni estén en uso pasan a papelera al llegar al límite. La papelera se conserva 7 días y luego se elimina en la siguiente revisión, como máximo una hora después si el servicio está activo.</p>
+      <p class="text-xs text-[#666]">El espacio incluye originales y papelera; no incluye reels ni respaldos. Si se llena, se detienen las subidas sin acortar los 7 días de recuperación. Marcar favorito protege del borrado automático.</p>
+      <p id="gallery-summary" class="text-xs" role="status">Cargando galería…</p>
+      <div class="flex flex-wrap gap-2 items-center"><label class="text-xs" for="gallery-filter">Mostrar</label><select id="gallery-filter" class="border border-[#ddd] bg-white p-2 text-xs"><option value="all">Todos</option><option value="image">Fotos</option><option value="video">Videos</option><option value="favorite">Favoritos</option><option value="trash">Papelera</option></select><button id="gallery-refresh" type="button" class="border border-[#ddd] bg-white p-2 text-xs">Actualizar</button><button id="gallery-use" type="button" disabled class="bg-black text-white p-2 text-xs disabled:opacity-40">Usar seleccionados (0)</button></div>
+      <p class="text-xs">Tocá «Seleccionar» en el orden que quieras para el reel y después «Usar seleccionados».</p>
+      <p id="gallery-message" role="status" class="text-xs"></p>
+      <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+    </section>
+
     <section id="panel-analytics" role="tabpanel" aria-labelledby="panel-tab-analytics" hidden class="w-full min-h-0 h-full overflow-y-auto bg-[#fafafa] p-4 space-y-4">
       <!-- BLOQUE 4: ANALÍTICA EN VIVO DE LA TIENDA WHATSAPP BUSINESS DE MARCOS -->
       <p class="text-xs text-[#6B706C]">Los filtros incluyen solo eventos fechados desde esta actualización. El historial anterior sin fecha se conserva aparte y no se mezcla con estos resultados.</p>
@@ -656,7 +669,7 @@
 
   <script>
     function showPanelTab(name) {
-      for (const tab of ['chat', 'tools', 'analytics', 'status']) {
+      for (const tab of ['chat', 'tools', 'gallery', 'analytics', 'status']) {
         const active = name === tab;
         document.getElementById('panel-' + tab).hidden = !active;
         const button = document.getElementById('panel-tab-' + tab);
@@ -672,7 +685,7 @@
     document.querySelector('[role="tablist"]').addEventListener('keydown', event => {
       if (!['ArrowUp', 'ArrowDown', 'Home', 'End'].includes(event.key)) return;
       event.preventDefault();
-      const tabs = ['chat', 'tools', 'analytics', 'status'];
+      const tabs = ['chat', 'tools', 'gallery', 'analytics', 'status'];
       const current = tabs.findIndex(tab => !document.getElementById('panel-' + tab).hidden);
       const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1
         : (current + (event.key === 'ArrowDown' ? 1 : -1) + tabs.length) % tabs.length;
@@ -683,8 +696,8 @@
     let lastChatCount = -1;
     let selectedFiles = [];
     let reelDraftFiles = (() => {
-      try { const value = JSON.parse(sessionStorage.getItem('ariel-reel-draft')); return Array.isArray(value) ? value.filter(v => typeof v === 'string') : null; }
-      catch (_) { return null; }
+      try { const value = JSON.parse(sessionStorage.getItem('ariel-reel-draft')); return Array.isArray(value) ? value.filter(v => typeof v === 'string') : []; }
+      catch (_) { return []; }
     })();
     function saveReelDraft() {
       try { sessionStorage.setItem('ariel-reel-draft', JSON.stringify(reelDraftFiles)); } catch (_) {}
@@ -766,6 +779,7 @@
     async function handleFilesUpload(event) {
       const fileList = Array.from(event.target.files || []);
       if (!fileList.length) return;
+      if (fileList.length + selectedFiles.length > 100) { alert('Podés armar un reel con hasta 100 archivos. Limpiá la selección o elegí menos archivos.'); return; }
 
       const btnPanel = document.getElementById('btn-upload-panel');
       const origHtml = btnPanel.innerHTML;
@@ -878,21 +892,9 @@
 
     async function deleteUploadFile(event, filename) {
       event.stopPropagation();
-      try {
-        await fetch('/api/delete-upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filename })
-        });
-        const idx = selectedFiles.indexOf(filename);
-        if (idx >= 0) {
-          selectedFiles.splice(idx, 1);
-          updateSelectedBar();
-        }
-        await loadState(false);
-      } catch (err) {
-        console.error('Error al eliminar archivo:', err);
-      }
+      selectedFiles = selectedFiles.filter(name => name !== filename);
+      reelDraftFiles = reelDraftFiles.filter(name => name !== filename);
+      saveReelDraft();updateSelectedBar();await loadState(false);
     }
 
     async function loadState(scrollIfNew = true) {
@@ -915,6 +917,10 @@
         }
 
         // Renderizar Galería de Archivos Reales de Marcos
+        const liveMedia = new Set((data.uploads || []).map(file => file.name));
+        selectedFiles = selectedFiles.filter(name => liveMedia.has(name));
+        reelDraftFiles = (reelDraftFiles || []).filter(name => liveMedia.has(name));
+        saveReelDraft();updateSelectedBar();
         const uploads = (data.uploads || []).filter(file => reelDraftFiles === null || reelDraftFiles.includes(file.name));
         const uploadsGrid = document.getElementById('uploads-grid');
         uploadsGrid.innerHTML = uploads.map(u => {
@@ -925,7 +931,7 @@
             ? `<span class="absolute top-1 right-1 w-5 h-5 rounded-full bg-[#171717] text-white font-extrabold text-[11px] flex items-center justify-center shadow">${selIndex + 1}</span>`
             : '';
           const delUploadBtn = `
-            <button type="button" onclick="deleteUploadFile(event, '${u.name}')" title="Eliminar este archivo" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#FFFFFF]/90 hover:bg-[#E8D5D2] text-[#8C534B] border border-[#e5e5e5] text-[10px] flex items-center justify-center shadow-sm transition">
+            <button type="button" onclick="deleteUploadFile(event, '${u.name}')" title="Quitar del armado; conservar en la galería" class="absolute top-1 left-1 w-5 h-5 rounded-full bg-[#FFFFFF]/90 hover:bg-[#E8D5D2] text-[#8C534B] border border-[#e5e5e5] text-[10px] flex items-center justify-center shadow-sm transition">
               <i class="fa-solid fa-xmark"></i>
             </button>
           `;
@@ -1851,6 +1857,7 @@
     <button id="support-toggle" type="button" aria-expanded="false" aria-controls="support-box" aria-label="Abrir ayuda de Ariel"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3v5M15 3h10" stroke="currentColor" stroke-width="2"/><rect x="5" y="9" width="30" height="26" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11" y="16" width="5" height="5" fill="currentColor"/><rect x="24" y="16" width="5" height="5" fill="currentColor"/><path d="M13 27h14M1 16v12M39 16v12" stroke="currentColor" stroke-width="2"/></svg><span>¿Necesitás ayuda?</span></button>
   </div>
   <script src="/support-widget.js" defer></script>
+  <script src="/gallery.js" defer></script>
 
 </body>
 </html>

@@ -22,3 +22,6 @@ state.json*
 !/.env.example
 
 support.sqlite3*
+
+media-library.sqlite3*
+uploads_reales/

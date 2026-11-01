@@ -115,6 +115,38 @@ class PrivateDeployment(unittest.TestCase):
         self.assertEqual(status,200);self.assertIn('incident',json.loads(raw))
 
 
+    def test_028_gallery_api_restore_and_render_protection(self):
+        import base64, io
+        from PIL import Image
+        from unittest.mock import patch
+        self.assertEqual(self.request('GET','/api/media')[0],401)
+        _, headers, _ = self.request('GET','/login')
+        cookie=headers['Set-Cookie'].split(';')[0]
+        status, headers, _=self.request('POST','/api/auth/login',{'username':'dueño','password':'temporary-fixture-789'},{'Cookie':cookie,'X-CSRF-Token':cookie.split('=',1)[1]})
+        self.assertEqual(status,200)
+        hdr={'Cookie':headers['Set-Cookie'].split(';')[0]}
+        _, _, raw=self.request('GET','/api/auth/session',headers=hdr)
+        hdr['X-CSRF-Token']=json.loads(raw)['csrfToken']
+        image=io.BytesIO();Image.new('RGB',(4,4),'red').save(image,format='PNG')
+        status, _, raw=self.request('POST','/api/upload',{'files':[{'name':'gallery-fixture.png','dataBase64':base64.b64encode(image.getvalue()).decode()}]},hdr)
+        self.assertEqual(status,200);name=json.loads(raw)['saved'][0]
+        self.assertEqual(self.request('GET','/uploads/'+name,headers=hdr)[0],200)
+        for favorite in [True,False]:
+            self.assertEqual(self.request('POST','/api/media/action',{'name':name,'action':'favorite','value':favorite},hdr)[0],200)
+            if favorite:self.assertEqual(self.request('POST','/api/delete-upload',{'filename':name},hdr)[0],400)
+        self.assertEqual(self.request('POST','/api/delete-upload',{'filename':name},hdr)[0],200)
+        self.assertEqual(self.request('GET','/uploads/'+name,headers=hdr)[0],404)
+        self.assertEqual(self.request('POST','/api/media/action',{'name':name,'action':'restore'},hdr)[0],200)
+        self.assertEqual(self.request('GET','/uploads/'+name,headers=hdr)[0],200)
+        def render(*args,**kwargs):
+            self.assertTrue(next(f for f in server.media_library.snapshot()['files'] if f['name']==name)['inUse'])
+            with self.assertRaises(ValueError):server.media_library.action(name,'trash')
+            return 'fixture.mp4'
+        with patch('reel_media.build_reel',render):
+            self.assertEqual(self.request('POST','/api/build-reel',{'selectedFiles':[name]},hdr)[0],200)
+        self.assertFalse(next(f for f in server.media_library.snapshot()['files'] if f['name']==name)['inUse'])
+
+
     def test_03_untrusted_tracking_and_invalid_bodies(self):
         self.assertEqual(self.request('POST','/api/track',{}, {'Origin':'https://hostil.example'})[0],403)
         status, headers, raw = self.request('POST','/api/track',{'event':'page_view','eventId':'private-deploy-fixture','sessionId':'fixture'}, {'Origin':'https://tienda-marcos.pages.dev'})

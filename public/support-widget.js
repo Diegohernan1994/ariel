@@ -7,7 +7,7 @@
   const baseFetch=window.fetch.bind(window), reported=new Map();
   function message(role,text) { const p=document.createElement('p'); p.className='support-message '+role; p.textContent=text; feed.appendChild(p);feed.scrollTop=feed.scrollHeight; }
   function open(value) { box.hidden=!value;toggle.setAttribute('aria-expanded',String(value));if(value)input.focus(); }
-  function sync() { section=document.querySelector('[role="tab"][aria-selected="true"]')?.id.replace('panel-tab-','') || 'chat';host.hidden=section==='chat';if(host.hidden)open(false);document.getElementById('support-context').textContent={tools:'Herramientas',analytics:'Analíticas',status:'Estado de tienda',chat:'Chat'}[section]; }
+  function sync() { section=document.querySelector('[role="tab"][aria-selected="true"]')?.id.replace('panel-tab-','') || 'chat';host.hidden=section==='chat';if(host.hidden)open(false);document.getElementById('support-context').textContent={tools:'Herramientas',gallery:'Galería',analytics:'Analíticas',status:'Estado de tienda',chat:'Chat'}[section]; }
   async function record(payload) {
     const response=await baseFetch('/api/support/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,section})});
     if(!response.ok)throw Error('No se pudo guardar el reporte. No se envió ningún aviso.');

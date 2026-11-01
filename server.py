@@ -24,6 +24,7 @@ if BASE_DIR not in sys.path:
 from access_control import AccessControl
 from auth_http import AuthHTTPMixin
 from support_service import SupportService, answer_help
+from media_library import MediaLibrary
 from analytics_store import query as query_analytics, record as record_analytics
 DATA_DIR = os.path.realpath(os.environ.get("DATA_DIR", BASE_DIR))
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -65,6 +66,8 @@ if os.path.exists(src_reels) and not os.path.exists(reels_init_flag):
 
 if not os.path.exists(STATE_FILE):
     shutil.copy2(os.path.join(BASE_DIR, "seed-state.json"), STATE_FILE)
+
+media_library = MediaLibrary(UPLOADS_DIR, DATA_DIR, max_bytes=int(os.environ.get("MEDIA_STORAGE_LIMIT_MB", "2048"))*1024**2)
 
 state_lock = threading.Lock()
 state_operation_lock = threading.RLock()
@@ -265,19 +268,12 @@ def render_segment_from_real_media(media_path, badge, headline, subline, cta_tex
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def list_uploaded_media():
-    valid_exts = (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v", ".jpg", ".jpeg", ".png", ".webp")
-    items = []
-    if os.path.exists(UPLOADS_DIR):
-        for fname in sorted(os.listdir(UPLOADS_DIR), key=lambda x: os.path.getmtime(os.path.join(UPLOADS_DIR, x)), reverse=True):
-            if fname.lower().endswith(valid_exts):
-                ext = os.path.splitext(fname)[1].lower()
-                mtype = "video" if ext in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v") else "image"
-                items.append({"name": fname, "type": mtype, "url": f"/uploads/{fname}"})
-    return items
+    return media_library.snapshot()['files']
 
 def generate_visual_reel(angle="general", custom_title=None, selected_files=None, transition="none"):
     from reel_media import build_reel
-    return build_reel(UPLOADS_DIR, REELS_DIR, TEMP_DIR, selected_files, transition=transition)
+    with media_library.using(selected_files):
+        return build_reel(UPLOADS_DIR, REELS_DIR, TEMP_DIR, selected_files, transition=transition)
 
 # ==============================================================================
 # MOTOR DE VOZ DEL AGENTE: ESCUCHAR AUDIOS (STT) Y RESPONDER CON VOZ (TTS)
@@ -537,6 +533,10 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
         if access_control.local_setup:
             self.store_origins.update({"http://localhost:4321", "http://127.0.0.1:4321"})
         super().__init__(*args, **kwargs)
+        media_library.start()
+    def server_close(self):
+        media_library.close()
+        super().server_close()
     daemon_threads = True
     allow_reuse_address = False
 
@@ -599,6 +599,7 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             "/sw.js": "application/javascript",
             "/pwa.js": "application/javascript",
             "/support-widget.js": "application/javascript",
+            "/gallery.js": "application/javascript",
             "/offline.html": "text/html; charset=utf-8",
             "/icons/ariel-192.png": "image/png",
             "/icons/ariel-512.png": "image/png",
@@ -619,6 +620,10 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
                 self.send_header("Service-Worker-Allowed", "/")
             self.end_headers()
             self.wfile.write(body)
+            return
+
+        if path == "/api/media":
+            self._send_json(media_library.snapshot())
             return
 
         if path == "/api/support/reports":
@@ -700,6 +705,9 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
         if path.startswith("/uploads/"):
             fname = os.path.basename(path)
             fpath = os.path.join(UPLOADS_DIR, fname)
+            if not media_library.active(fname):
+                self.send_error(404, "Archivo no disponible")
+                return
             if os.path.exists(fpath):
                 ext = os.path.splitext(fname)[1].lower()
                 ctype = "video/mp4" if ext in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v") else "image/jpeg"
@@ -834,21 +842,31 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
                     pass
             return
 
+        if path == "/api/media/action":
+            try:
+                self._send_json(media_library.action(payload.get('name'), payload.get('action'), payload.get('value')))
+            except ValueError as error:
+                self._send_json({'error': str(error)}, 400)
+            return
+
         if path == "/api/upload":
-            files = payload.get("files", [])
             saved = []
-            for fobj in files:
-                raw_name = re.sub(r"[^a-zA-Z0-9._-]", "_", fobj.get("name", "archivo.jpg"))
-                b64 = fobj.get("dataBase64", "")
-                if "," in b64:
-                    b64 = b64.split(",", 1)[1]
-                raw_bytes = base64.b64decode(b64)
-                final_name = f"real_{__import__('uuid').uuid4().hex}_{raw_name}"
-                dest_path = os.path.join(UPLOADS_DIR, final_name)
-                with open(dest_path, "wb") as out_f:
-                    out_f.write(raw_bytes)
-                saved.append(final_name)
-            self._send_json({"ok": True, "saved": saved})
+            try:
+                files = payload.get('files', [])
+                if not isinstance(files, list) or not 1 <= len(files) <= 100:
+                    raise ValueError('Seleccioná entre 1 y 100 archivos.')
+                for fobj in files:
+                    if not isinstance(fobj, dict) or not isinstance(fobj.get('dataBase64'), str):
+                        raise ValueError('Archivo inválido')
+                    encoded = fobj['dataBase64'].split(',', 1)[-1]
+                    try:
+                        raw = base64.b64decode(encoded, validate=True)
+                    except Exception:
+                        raise ValueError('No se pudo leer el archivo subido.')
+                    saved.append(media_library.add(fobj.get('name'), raw))
+                self._send_json({'ok': True, 'saved': saved})
+            except ValueError as error:
+                self._send_json({'error': str(error), 'saved': saved}, 400)
             return
 
         if path == "/api/delete-reel":
@@ -890,18 +908,10 @@ class AgentRequestHandler(AuthHTTPMixin, SimpleHTTPRequestHandler):
             return
 
         if path == "/api/delete-upload":
-            fname = os.path.basename(urllib.parse.unquote(payload.get("filename", "")).strip())
-            if not fname:
-                self._send_json({"error": "Archivo inválido"}, 400)
-                return
-            fpath = os.path.join(UPLOADS_DIR, fname)
-            if os.path.exists(fpath):
-                try:
-                    os.remove(fpath)
-                except Exception as e:
-                    self._send_json({"error": str(e)}, 500)
-                    return
-            self._send_json({"ok": True})
+            try:
+                self._send_json(media_library.action(payload.get('filename'), 'trash'))
+            except ValueError as error:
+                self._send_json({'error': str(error)}, 400)
             return
 
         if path == "/api/clear-chat":
